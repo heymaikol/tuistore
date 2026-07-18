@@ -13,7 +13,7 @@ Built on [🍚 ricekit](https://github.com/Gheat1/ricekit) · seeded from
 [awesome-tuis](https://github.com/rothgar/awesome-tuis) · made by [@Gheat1](https://github.com/Gheat1)
 
 ![python](https://img.shields.io/badge/python-3.11+-4b8bbe)
-![license](https://img.shields.io/badge/license-MIT-a6e3a1)
+![license](https://img.shields.io/badge/license-GPLv3-a6e3a1)
 ![tools](https://img.shields.io/badge/catalog-670+_tuis-fab387)
 ![built on](https://img.shields.io/badge/built_on-ricekit-cba6f7)
 
@@ -163,5 +163,5 @@ The awesome-tuis list itself is the upstream source for most entries.
 
 ## license
 
-[MIT](LICENSE) — made by [@Gheat1](https://github.com/Gheat1), built on
+[GPL-3.0-or-later](LICENSE) — made by [@Gheat1](https://github.com/Gheat1), built on
 [ricekit](https://github.com/Gheat1/ricekit).
