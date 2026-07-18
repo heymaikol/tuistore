@@ -25,8 +25,8 @@ from ricekit.modals import HelpModal, PickerModal, ThemeModal  # noqa: F401
 from ricekit.storage import AppDirs
 from ricekit.widgets import KitScroll, NavList, Splitter, pop_in
 
-from . import __version__, github, platform
-from .catalog import Catalog, Entry, load, search
+from . import __version__, github, installed as inst, platform
+from .catalog import Catalog, Entry, load, refetch, search
 from .installer import Method, best, rank, run_stream
 
 DIRS = AppDirs("tuistore")
@@ -76,6 +76,7 @@ def rel_time(iso: str | None) -> str:
 
 
 FEATURED_CAT = "★ Featured"
+INSTALLED_CAT = "◆ Installed"
 ALL_CAT = "All tools"
 
 
@@ -275,6 +276,7 @@ class InstallModal(ModalScreen):
             result.append(f"{icons.CHECK_CIRCLE}  installed ", style=f"bold {palette.green}")
             result.append(self.entry.name, style=palette.text)
             self.app.notify(f"installed {self.entry.name}", severity="information")
+            self.app.on_installed(self.entry, self.method)
         else:
             result.append(f"{icons.CROSS_CIRCLE}  exited with code {code}", style=f"bold {palette.red}")
             self.app.notify(f"{self.entry.name} install failed (code {code})", severity="error")
@@ -352,10 +354,15 @@ class FeaturesModal(ModalScreen):
                  style=p.dim)
         feat(icons.LIST, "read the README in-app",
              "press r on any tool to read its README right here and inspect it before installing.")
+        feat(icons.GEAR, "it's a package manager, not just a browser",
+             "tuistore remembers what it installed — the ◆ Installed filter shows it all, u updates")
+        t.append("      and x uninstalls in place, and , (manage) updates tuistore, refetches the\n"
+                 "      catalog, or updates everything you've installed.\n\n", style=p.dim)
 
         t.append("  keys\n", style=f"bold {p.dim}")
         for k, d in (("/", "search"), ("enter", "open detail"), ("i", "install"),
-                     ("r", "read README"), ("s", "star / unstar"), ("o", "open in browser"),
+                     ("r", "read README"), ("u", "update"), ("x", "uninstall"),
+                     ("s", "star / unstar"), ("o", "open in browser"), (",", "manage"),
                      ("t", "theme"), ("?", "all keys"), ("q", "quit")):
             t.append(f"    {k.ljust(7)}", style=p.blue)
             t.append(f"{d}\n", style=p.sub)
@@ -449,6 +456,225 @@ class ReadmeModal(ModalScreen):
         self.dismiss(None)
 
 
+# ── generic command runner (update / uninstall / self-update / update-all) ────
+class RunModal(ModalScreen):
+    """Confirm-then-run one shell command, streaming output."""
+
+    BINDINGS = [
+        Binding("escape", "close", show=False),
+        Binding("enter", "run", show=False),
+        Binding("q", "close", show=False),
+    ]
+
+    DEFAULT_CSS = """
+    RunModal { align: center middle; background: $kit-overlay; }
+    RunModal #rbox {
+        width: 84; max-width: 92%; height: auto; max-height: 88%;
+        background: $kit-modal-bg; border: round $kit-border-focus; padding: 1 2;
+    }
+    RunModal #rtitle { padding: 0 0 1 0; }
+    RunModal #rcmd {
+        height: auto; padding: 1 2; margin: 0 0 1 0;
+        border: round $kit-border; background: $kit-cursor;
+    }
+    RunModal #rsub { height: auto; padding: 0 1; margin: 0 0 1 0; }
+    RunModal #rsub.danger { border-left: thick $kit-border-alt; }
+    RunModal #rlog { height: auto; max-height: 20; display: none; margin: 1 0 0 0; }
+    RunModal #rlog.on { display: block; }
+    RunModal #rhint { padding: 1 0 0 0; }
+    """
+
+    def __init__(self, title: str, command: str, *, subtitle: str = "",
+                 danger: bool = False, verb: str = "run", on_success=None) -> None:
+        super().__init__()
+        self.title_txt = title
+        self.command = command
+        self.subtitle = subtitle
+        self.danger = danger
+        self.verb = verb
+        self.on_success = on_success
+        self.running = False
+        self.done = False
+
+    def compose(self) -> ComposeResult:
+        with Vertical(id="rbox"):
+            yield Static(id="rtitle")
+            yield Static(id="rcmd")
+            yield Static(id="rsub")
+            with KitScroll(id="rlog"):
+                yield Static(id="rlogtext")
+            yield Static(id="rhint")
+
+    def on_mount(self) -> None:
+        pop_in(self.query_one("#rbox"))
+        self._refresh_view()
+
+    def _refresh_view(self) -> None:
+        p = palette
+        self.query_one("#rtitle", Static).update(Text(self.title_txt, style=f"bold {p.text}"))
+        c = Text()
+        c.append("$ ", style=p.dim)
+        c.append(self.command, style=p.text)
+        self.query_one("#rcmd", Static).update(c)
+        sub = Text()
+        if self.danger:
+            sub.append("⚠  ", style=f"bold {p.peach}")
+            sub.append(self.subtitle or "this removes the tool from your system", style=p.peach)
+        elif self.subtitle:
+            sub.append(self.subtitle, style=p.dim)
+        self.query_one("#rsub", Static).update(sub)
+        self.query_one("#rsub").set_class(self.danger, "danger")
+        self._hint()
+
+    def _hint(self) -> None:
+        p = palette
+        h = Text()
+        if self.done:
+            h.append("enter", style=p.blue)
+            h.append(" / ", style=p.faint)
+            h.append("esc", style=p.blue)
+            h.append(" close", style=p.dim)
+        elif self.running:
+            h.append(f"{icons.CLOCK} working…", style=p.peach)
+        else:
+            h.append("enter", style=p.blue)
+            h.append(f" {self.verb}   ", style=p.dim)
+            h.append("esc", style=p.blue)
+            h.append(" cancel", style=p.dim)
+        self.query_one("#rhint", Static).update(h)
+
+    def action_run(self) -> None:
+        if self.done:
+            self.dismiss(None)
+            return
+        if self.running:
+            return
+        self.running = True
+        self.query_one("#rlog").add_class("on")
+        self._hint()
+        self._go()
+
+    @work(exclusive=True, group="run")
+    async def _go(self) -> None:
+        logw = self.query_one("#rlogtext", Static)
+        lines: list[str] = []
+        code = "?"
+
+        def flush() -> None:
+            body = Text()
+            for ln in lines[-400:]:
+                body.append(ln + "\n", style=palette.sub)
+            logw.update(body)
+            self.query_one("#rlog").scroll_end(animate=False)
+
+        async for kind, payload in run_stream(self.command):
+            if kind == "out":
+                lines.append(payload)
+                if len(lines) % 2 == 0 or len(lines) < 12:
+                    flush()
+            else:
+                code = payload
+        self.running = False
+        self.done = True
+        p = palette
+        res = Text()
+        if code == "0":
+            res.append(f"{icons.CHECK_CIRCLE}  done", style=f"bold {p.green}")
+            if self.on_success:
+                try:
+                    self.on_success()
+                except Exception:
+                    pass
+        else:
+            res.append(f"{icons.CROSS_CIRCLE}  exited with code {code}", style=f"bold {p.red}")
+        body = Text()
+        for ln in lines[-400:]:
+            body.append(ln + "\n", style=p.sub)
+        body.append("\n")
+        body.append(res)
+        logw.update(body)
+        self.query_one("#rlog").scroll_end(animate=False)
+        self._hint()
+
+    def action_close(self) -> None:
+        if self.running:
+            self.app.notify("still running — let it finish", severity="warning")
+            return
+        self.dismiss(None)
+
+
+# ── manage menu (update tuistore · refetch catalog · update all) ──────────────
+class ManageModal(ModalScreen):
+    BINDINGS = [
+        Binding("escape", "close", show=False),
+        Binding("q", "close", show=False),
+        Binding("comma", "close", show=False),
+    ]
+
+    DEFAULT_CSS = """
+    ManageModal { align: center middle; background: $kit-overlay; }
+    ManageModal #mbox {
+        width: 60; height: auto; max-height: 85%;
+        background: $kit-modal-bg; border: round $kit-border-focus; padding: 1 1;
+    }
+    ManageModal #mhead { padding: 0 1 1 1; }
+    ManageModal #mlist { height: auto; max-height: 16; }
+    ManageModal #mfoot { padding: 1 1 0 1; }
+    """
+
+    def compose(self) -> ComposeResult:
+        with Vertical(id="mbox"):
+            yield Static(id="mhead")
+            yield NavList(id="mlist")
+            yield Static(id="mfoot")
+
+    def _opt(self, oid: str, title: str, sub: str) -> Option:
+        p = palette
+        row = Text()
+        row.append("  ")
+        row.append(f"{title}  ", style=p.text)
+        row.append(sub, style=p.dim)
+        return Option(row, id=oid)
+
+    def on_mount(self) -> None:
+        p = palette
+        pop_in(self.query_one("#mbox"))
+        cat = self.app.catalog
+        self.query_one("#mhead", Static).update(
+            Text(f"{icons.GEAR}  manage", style=f"bold {p.sub}"))
+        n = len(self.app.ledger)
+        ol = self.query_one("#mlist", NavList)
+        ol.add_options([
+            self._opt("self", f"{icons.REFRESH} update tuistore", f"v{__version__} → latest"),
+            self._opt("catalog", f"{icons.LIST} refetch catalog",
+                      f"{len(cat.entries)} tools · {(cat.generated_at or '')[:10]}"),
+            self._opt("installed", f"{icons.PLUG} update all installed", f"{n} tool(s)"),
+            self._opt("cache", f"{icons.TRASH} clear cache", "scraped readmes & installs"),
+        ])
+        ol.highlighted = 0
+        ol.focus()
+        self.query_one("#mfoot", Static).update(
+            Text(f"tuistore {__version__} · {self.app.env.label}", style=p.dim))
+
+    @on(NavList.OptionSelected, "#mlist")
+    def _selected(self, event: NavList.OptionSelected) -> None:
+        oid = event.option.id or ""
+        app = self.app
+        self.dismiss(None)
+        if oid == "self":
+            app.action_update_self()
+        elif oid == "catalog":
+            app.refetch_catalog()
+        elif oid == "installed":
+            app.action_update_all()
+        elif oid == "cache":
+            count = DIRS.clear_cache()
+            app.notify(f"cleared {count} cached file(s)")
+
+    def action_close(self) -> None:
+        self.dismiss(None)
+
+
 # ── the app ──────────────────────────────────────────────────────────────────
 class StoreApp(KitApp):
     TITLE = "tuistore"
@@ -457,14 +683,16 @@ class StoreApp(KitApp):
         Binding("slash", "focus_search", "search"),
         Binding("i", "install", "install"),
         Binding("r", "read_readme", "readme"),
+        Binding("u", "update", "update"),
+        Binding("x", "uninstall", "remove"),
         Binding("s", "toggle_star", "star"),
         Binding("o", "open_browser", "open"),
+        Binding("comma", "manage", "manage"),
         Binding("f", "features", "features"),
         Binding("t", "cycle_kit_theme", "theme"),
         Binding("question_mark", "help", "help"),
         Binding("q", "quit", "quit"),
         Binding("escape", "back", show=False),
-        Binding("ctrl+r", "rebuild_hint", show=False),
     ]
 
     CSS = f"""
@@ -524,6 +752,27 @@ class StoreApp(KitApp):
         self._by_slug: dict[str, Entry] = {e.slug: e for e in self.catalog.entries}
         self._starred: dict[str, bool | None] = {}
         self._scraped: set[str] = set()
+        self.ledger: dict = inst.load_ledger()
+        self._bins = inst.path_binaries()
+
+    # ── installed status ───────────────────────────────────────────────
+    def status_of(self, entry: Entry) -> str | None:
+        """"managed" (installed via tuistore), "present" (on PATH), or None."""
+        return inst.status(entry.slug, entry.name, entry.methods, self.ledger, self._bins)
+
+    def _reload_installed(self) -> None:
+        self.ledger = inst.load_ledger()
+        inst.refresh_path()
+        self._bins = inst.path_binaries()
+
+    def on_installed(self, entry: Entry, method: Method) -> None:
+        """Called by the install modal on success — record it, refresh state."""
+        inst.record_install(entry.slug, entry.name, method)
+        self._reload_installed()
+        if self.current is entry:
+            self.render_detail(entry)
+        self.render_results(preserve=True)
+        self._build_sidebar()
 
     # ── compose ────────────────────────────────────────────────────────
     class _Search(Input):
@@ -607,7 +856,9 @@ class StoreApp(KitApp):
             counts[e.category] = counts.get(e.category, 0) + 1
         cats = sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))
         featured_n = sum(1 for e in self.catalog.entries if e.featured)
-        head = [(FEATURED_CAT, featured_n), (ALL_CAT, len(self.catalog.entries))]
+        installed_n = sum(1 for e in self.catalog.entries if self.status_of(e))
+        head = [(FEATURED_CAT, featured_n), (INSTALLED_CAT, installed_n),
+                (ALL_CAT, len(self.catalog.entries))]
         return head + cats
 
     def _build_sidebar(self) -> None:
@@ -618,6 +869,7 @@ class StoreApp(KitApp):
         for name, count in self._categories():
             active = (
                 (name == FEATURED_CAT and self.active_category == "__featured__")
+                or (name == INSTALLED_CAT and self.active_category == "__installed__")
                 or (name == ALL_CAT and self.active_category is None)
                 or name == self.active_category
             )
@@ -629,6 +881,8 @@ class StoreApp(KitApp):
             style = palette.text if active else palette.sub
             if name == FEATURED_CAT:
                 row.append(name, style=f"bold {palette.peach if not active else palette.text}")
+            elif name == INSTALLED_CAT:
+                row.append(name, style=f"bold {palette.green if not active else palette.text}")
             else:
                 row.append(name, style=style)
             row.append(f"  {count}", style=palette.faint)
@@ -636,15 +890,18 @@ class StoreApp(KitApp):
         ol.add_options(opts)
         ol.highlighted = prev if prev is not None else 0
 
+    def _category_key(self, name: str) -> str | None:
+        if name == ALL_CAT:
+            return None
+        if name == FEATURED_CAT:
+            return "__featured__"
+        if name == INSTALLED_CAT:
+            return "__installed__"
+        return name
+
     @on(NavList.OptionSelected, "#sidebar")
     def _sidebar_selected(self, event: NavList.OptionSelected) -> None:
-        name = event.option.id or ALL_CAT
-        if name == ALL_CAT:
-            self.active_category = None
-        elif name == FEATURED_CAT:
-            self.active_category = "__featured__"
-        else:
-            self.active_category = name
+        self.active_category = self._category_key(event.option.id or ALL_CAT)
         self._build_sidebar()
         self.render_results()
         self.query_one("#results").focus()
@@ -652,13 +909,7 @@ class StoreApp(KitApp):
     @on(NavList.OptionHighlighted, "#sidebar")
     def _sidebar_highlighted(self, event: NavList.OptionHighlighted) -> None:
         # live filter as you arrow through categories
-        name = event.option.id or ALL_CAT
-        if name == ALL_CAT:
-            new = None
-        elif name == FEATURED_CAT:
-            new = "__featured__"
-        else:
-            new = name
+        new = self._category_key(event.option.id or ALL_CAT)
         if new != self.active_category:
             self.active_category = new
             self.render_results()
@@ -667,6 +918,9 @@ class StoreApp(KitApp):
     def _current_pool(self) -> list[Entry]:
         if self.active_category == "__featured__":
             pool = [e for e in self.catalog.entries if e.featured]
+            return search(pool, self.query) if self.query else pool
+        if self.active_category == "__installed__":
+            pool = [e for e in self.catalog.entries if self.status_of(e)]
             return search(pool, self.query) if self.query else pool
         cat = None if self.active_category is None else self.active_category
         return search(self.catalog.entries, self.query, category=cat)
@@ -680,7 +934,11 @@ class StoreApp(KitApp):
             row.append(" ★", style=palette.peach)
         if e.archived:
             row.append(" ⊘", style=palette.faint)
-        pad = max(1, 24 - len(e.name) - (2 if e.featured else 0) - (2 if e.archived else 0))
+        installed = self.status_of(e)
+        if installed:
+            row.append(" ✓", style=palette.green)
+        pad = max(1, 24 - len(e.name) - (2 if e.featured else 0)
+                  - (2 if e.archived else 0) - (2 if installed else 0))
         row.append(" " * pad)
         row.append("★ ", style=palette.dim)  # plain glyph: readable without a nerd font
         row.append(f"{star_str(e.stars):<6}", style=palette.dim)
@@ -707,9 +965,8 @@ class StoreApp(KitApp):
                 Text("\n  nothing here — try another search", style=palette.dim))
             return
         ol.add_options([self._result_row(e, width) for e in pool])
-        label = self.active_category or "all tools"
-        if self.active_category == "__featured__":
-            label = "featured"
+        label = {None: "all tools", "__featured__": "featured",
+                 "__installed__": "installed"}.get(self.active_category, self.active_category)
         ol.border_title = f"{label}"
         ol.border_subtitle = f"{len(pool)}"
         target = prev if (prev is not None and prev < len(pool)) else 0
@@ -770,6 +1027,25 @@ class StoreApp(KitApp):
         t.append("\n")
         t.append(entry.slug, style=p.faint)
         t.append("\n\n")
+        # installed status
+        st = self.status_of(entry)
+        if st == "managed":
+            rec = self.ledger.get(entry.slug, {})
+            t.append(f"{icons.CHECK_CIRCLE} installed", style=f"bold {p.green}")
+            if rec.get("kind"):
+                t.append(f" · via {rec['kind']}", style=p.dim)
+            if rec.get("at"):
+                t.append(f" · {rec['at']}", style=p.faint)
+            t.append("     ")
+            t.append("u", style=p.blue)
+            t.append(" update  ", style=p.dim)
+            t.append("x", style=p.blue)
+            t.append(" uninstall", style=p.dim)
+            t.append("\n\n")
+        elif st == "present":
+            t.append(f"{icons.CHECK_CIRCLE} installed", style=f"bold {p.green}")
+            t.append("  · not via tuistore — manage it with your package manager", style=p.dim)
+            t.append("\n\n")
         # author note (Gheat's suite)
         if entry.author_note:
             t.append(f"{icons.STAR} ", style=p.peach)
@@ -908,6 +1184,109 @@ class StoreApp(KitApp):
             return
         self.push_screen(ReadmeModal(self.current))
 
+    # ── manage installed tools ─────────────────────────────────────────
+    def action_update(self) -> None:
+        e = self.current
+        if not e:
+            return
+        st = self.status_of(e)
+        if st != "managed":
+            msg = ("installed outside tuistore — update it with your package manager"
+                   if st == "present" else f"{e.name} isn't installed")
+            self.notify(msg, severity="warning")
+            return
+        rec = self.ledger.get(e.slug, {})
+        cmd = inst.update_command(rec)
+        if not cmd:
+            self.notify(f"no update command for a {rec.get('kind','?')} install",
+                        severity="warning")
+            return
+        self.push_screen(RunModal(
+            f"{icons.REFRESH} update {e.name}", cmd,
+            subtitle=f"via {rec.get('kind','')}", verb="update",
+            on_success=lambda: self._after_manage(e.slug)))
+
+    def action_uninstall(self) -> None:
+        e = self.current
+        if not e:
+            return
+        if self.status_of(e) != "managed":
+            self.notify("only tools installed via tuistore can be removed here",
+                        severity="warning")
+            return
+        rec = self.ledger.get(e.slug, {})
+        cmd = inst.uninstall_command(rec)
+        if not cmd:
+            self.notify(f"no uninstall command for a {rec.get('kind','?')} install",
+                        severity="warning")
+            return
+        self.push_screen(RunModal(
+            f"{icons.TRASH} uninstall {e.name}", cmd,
+            subtitle=f"removes {e.name} ({rec.get('kind','')})", danger=True,
+            verb="uninstall", on_success=lambda: self._after_uninstall(e.slug)))
+
+    def _after_manage(self, slug: str) -> None:
+        self._reload_installed()
+        e = self._by_slug.get(slug)
+        if e and self.current is e:
+            self.render_detail(e)
+
+    def _after_uninstall(self, slug: str) -> None:
+        inst.forget(slug)
+        self._reload_installed()
+        e = self._by_slug.get(slug)
+        if e:
+            self.notify(f"removed {e.name}")
+            if self.current is e:
+                self.render_detail(e)
+        self.render_results(preserve=True)
+        self._build_sidebar()
+
+    def action_manage(self) -> None:
+        self.push_screen(ManageModal())
+
+    def action_update_self(self) -> None:
+        if self.env.has("uv"):
+            cmd = ("uv tool upgrade tuistore || "
+                   "uv tool install --force git+https://github.com/Gheat1/tuistore")
+        elif self.env.has("pipx"):
+            cmd = "pipx upgrade tuistore"
+        else:
+            self.notify("need uv or pipx to self-update", severity="warning")
+            return
+        self.push_screen(RunModal(
+            f"{icons.REFRESH} update tuistore", cmd,
+            subtitle="restart tuistore afterwards to use the new version",
+            verb="update"))
+
+    def action_update_all(self) -> None:
+        parts = []
+        for rec in self.ledger.values():
+            uc = inst.update_command(rec)
+            if uc:
+                parts.append(f'echo "== {rec.get("name","?")} =="; {uc}; echo')
+        if not parts:
+            self.notify("nothing installed via tuistore to update", severity="warning")
+            return
+        self.push_screen(RunModal(
+            f"{icons.PLUG} update all installed", "\n".join(parts),
+            subtitle=f"{len(parts)} tool(s)", verb="update all",
+            on_success=self._reload_installed))
+
+    @work(exclusive=True, group="catalog")
+    async def refetch_catalog(self) -> None:
+        import asyncio
+        self.notify("fetching the latest catalog…")
+        ok, msg = await asyncio.to_thread(refetch)
+        if not ok:
+            self.notify(f"catalog update failed: {msg}", severity="error")
+            return
+        self.catalog = load()
+        self._by_slug = {e.slug: e for e in self.catalog.entries}
+        self._build_sidebar()
+        self.render_results(preserve=True)
+        self.notify(f"catalog updated — {msg}")
+
     @work(group="star")
     async def action_toggle_star(self) -> None:
         if not self.current or not self.current.is_github:
@@ -951,9 +1330,6 @@ class StoreApp(KitApp):
     def action_help(self) -> None:
         self.push_screen(HelpModal(HELP_SECTIONS, title="tuistore — keys"))
 
-    def action_rebuild_hint(self) -> None:
-        self.notify("refresh the catalog offline: uv run python tools/build_catalog.py")
-
 
 HELP_SECTIONS = [
     ("search & browse", [
@@ -967,13 +1343,16 @@ HELP_SECTIONS = [
     ("a tool", [
         ("i", "install (verified vs unverified; pick method with a)"),
         ("r", "read the README in-app (inspect before installing)"),
+        ("u", "update it (if installed via tuistore)"),
+        ("x", "uninstall it (if installed via tuistore)"),
         ("s", "star / unstar on GitHub"),
         ("o", "open repo / homepage in browser"),
     ]),
     ("app", [
+        (",", "manage — update tuistore · refetch catalog · update all"),
+        ("◆ Installed", "sidebar filter: everything you have installed"),
         ("f", "features / about"),
         ("t", "cycle theme"),
-        ("ctrl+p", "command palette · preview any theme"),
         ("?", "this help"),
         ("q", "quit"),
     ]),

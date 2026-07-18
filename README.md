@@ -65,8 +65,9 @@ Dead simple: **type to search, arrow to browse, `i` to install.**
  enter        open / focus a tool
  i            install  (press a to pick a different method)
  r            read the README in-app (inspect before you install)
- s            star / unstar on GitHub
- o            open the repo in your browser
+ u            update  ·  x  uninstall   (tools you installed via tuistore)
+ s            star / unstar on GitHub    o       open the repo in your browser
+ ,            manage (update tuistore · refetch catalog · update all)
  f            features / about            t       cycle theme
  ?            all keybindings             q       quit
 ```
@@ -107,6 +108,34 @@ This is the hard part, and it's the point of tuistore.
 <div align="center">
 <img src="assets/readme.png" alt="reading a tool's README in-app before installing" width="90%">
 </div>
+
+## installed, updates & uninstall
+
+tuistore isn't just a browser — it's a package manager for the tools it installs.
+
+- It **remembers what it installed** (which manager, which command), and also
+  **detects** tools already on your `PATH`. The **◆ Installed** filter in the
+  sidebar shows everything you have.
+- On any tool tuistore installed, **`u` updates** it and **`x` uninstalls** it —
+  in place, with the right command for the manager it used (`brew upgrade …`,
+  `cargo uninstall …`, `uv tool upgrade …`, and so on), streamed live.
+- **`,` opens the manage menu**: *update tuistore itself*, *refetch the catalog*
+  (pull the newest tool list without reinstalling), or *update everything you've
+  installed* in one go.
+
+<div align="center">
+<img src="assets/installed.png" alt="the Installed filter, with update / uninstall on a managed tool" width="90%">
+</div>
+
+Same things from the shell:
+
+```sh
+tuistore installed          # list what tuistore installed
+tuistore update             # update tuistore itself
+tuistore update installed   # update every tool tuistore installed
+tuistore refetch catalog    # pull the latest catalog
+tuistore --doctor           # what your machine looks like to the install engine
+```
 
 ## the catalog
 

@@ -177,20 +177,76 @@ def search(entries: list[Entry], query: str, *, category: str | None = None,
 
 
 # ── loading ──────────────────────────────────────────────────────────────────
-@lru_cache(maxsize=1)
-def load() -> Catalog:
-    """Load the bundled catalog.json (package data)."""
+# a fresher catalog fetched by `tuistore refetch-catalog` lands here and, if
+# newer than the bundled one, is used instead — so the store updates without
+# reinstalling the whole package.
+from pathlib import Path  # noqa: E402
+
+USER_CATALOG = Path.home() / ".local/state/tuistore/catalog.json"
+CATALOG_URL = (
+    "https://raw.githubusercontent.com/Gheat1/tuistore/main/tuistore/data/catalog.json"
+)
+
+
+def _bundled_text() -> str | None:
     try:
-        raw = resources.files("tuistore.data").joinpath("catalog.json").read_text()
-    except (FileNotFoundError, ModuleNotFoundError):
-        return Catalog()
+        return resources.files("tuistore.data").joinpath("catalog.json").read_text()
+    except (FileNotFoundError, ModuleNotFoundError, OSError):
+        return None
+
+
+def _parse(raw: str) -> Catalog:
     data = json.loads(raw)
-    entries = _dedupe([Entry.from_dict(e) for e in data.get("entries", [])])
     return Catalog(
-        entries=entries,
+        entries=_dedupe([Entry.from_dict(e) for e in data.get("entries", [])]),
         generated_at=data.get("generated_at", ""),
         source=data.get("source", ""),
     )
+
+
+@lru_cache(maxsize=1)
+def load() -> Catalog:
+    """Load the catalog — the user-refreshed copy if it's newer, else bundled."""
+    bundled = _bundled_text()
+    user = None
+    try:
+        if USER_CATALOG.exists():
+            user = USER_CATALOG.read_text()
+    except OSError:
+        user = None
+
+    def gen_at(raw: str | None) -> str:
+        try:
+            return json.loads(raw).get("generated_at", "") if raw else ""
+        except Exception:
+            return ""
+
+    chosen = bundled
+    if user and gen_at(user) >= gen_at(bundled):
+        chosen = user
+    if not chosen:
+        return Catalog()
+    try:
+        return _parse(chosen)
+    except Exception:
+        return _parse(bundled) if bundled else Catalog()
+
+
+def refetch(url: str = CATALOG_URL, dest: Path = USER_CATALOG) -> tuple[bool, str]:
+    """Download the latest catalog to the user path. Returns (ok, message)."""
+    import urllib.request
+
+    try:
+        with urllib.request.urlopen(url, timeout=30) as r:  # noqa: S310
+            raw = r.read().decode("utf-8")
+        doc = json.loads(raw)  # validate before writing
+        n = len(doc.get("entries", []))
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text(raw)
+        load.cache_clear()
+        return True, f"{n} tools · updated {doc.get('generated_at', '')}"
+    except Exception as e:
+        return False, str(e)
 
 
 def _dedupe(entries: list[Entry]) -> list[Entry]:
