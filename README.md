@@ -127,15 +127,29 @@ tuistore isn't just a browser — it's a package manager for the tools it instal
 <img src="assets/installed.png" alt="the Installed filter, with update / uninstall on a managed tool" width="90%">
 </div>
 
-Same things from the shell:
+### it's a CLI package manager too
+
+Everything works from the shell, so tuistore drops straight into dotfiles,
+setup scripts, and READMEs:
 
 ```sh
-tuistore installed          # list what tuistore installed
-tuistore update             # update tuistore itself
-tuistore update installed   # update every tool tuistore installed
-tuistore refetch catalog    # pull the latest catalog
-tuistore --doctor           # what your machine looks like to the install engine
+tuistore install lazygit     # resolve + install (platform-aware, confirmed)
+tuistore install btop++ -y   # -y to skip the prompt (great for scripts/CI)
+tuistore remove lazygit      # uninstall a tool you installed via tuistore
+tuistore update lazygit      # update one tool
+tuistore search git          # search the catalog
+tuistore info btop++         # details + every install method
+
+tuistore installed           # list what tuistore installed
+tuistore update              # update tuistore itself
+tuistore update installed    # update every tool tuistore installed
+tuistore refetch catalog     # pull the latest catalog
+tuistore --doctor            # what your machine looks like to the install engine
 ```
+
+A shell install uses the same engine (verified-before-guessed, platform-gated)
+and is recorded in the same ledger — so `tuistore installed`, `update`,
+`remove`, and the TUI's **◆ Installed** view all stay in sync.
 
 ## the catalog
 
