@@ -26,10 +26,10 @@ from .platform import Env
 # ── kind metadata ──────────────────────────────────────────────────────────
 # kind -> (label, preference[lower=better], requires, os allow, family allow)
 KINDS: dict[str, dict] = {
+    "uv":       dict(label="uv tool install",     pref=5,  requires=["uv"]),
     "cargo-binstall": dict(label="cargo binstall", pref=6, requires=["cargo-binstall"]),
     "brew":     dict(label="brew install",       pref=8,  requires=["brew"]),
     "cargo":    dict(label="cargo install",       pref=10, requires=["cargo"]),
-    "uv":       dict(label="uv tool install",     pref=12, requires=["uv"]),
     "pipx":     dict(label="pipx install",        pref=13, requires=["pipx"]),
     "go":       dict(label="go install",          pref=15, requires=["go"]),
     "pip":      dict(label="pip install",         pref=17, requires=["pip3"]),
@@ -102,8 +102,15 @@ class Method:
 
     def score(self, env: Env) -> tuple:
         pref = KINDS.get(self.kind, {}).get("pref", 60)
+        src = _SOURCE_RANK.get(self.source, 2)
+        # uv is the preferred installer for a python CLI — rank it in the
+        # trusted tier so it's the default whenever it's runnable. Its honest
+        # verified/unverified label (`.trust`) is unchanged, so the install
+        # screen still warns when the package name is only a guess.
+        if self.kind == "uv":
+            src = 0
         # available first, then verified-before-guessed, then niceness of kind
-        return (0 if self.available(env) else 1, _SOURCE_RANK.get(self.source, 2), pref)
+        return (0 if self.available(env) else 1, src, pref)
 
     def why_unavailable(self, env: Env) -> str:
         if self.os and env.os not in self.os:

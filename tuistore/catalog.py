@@ -195,10 +195,38 @@ def _bundled_text() -> str | None:
         return None
 
 
+_SRC_ORDER = {"official": 0, "readme": 1, "inferred": 2}
+
+
+def _prefer_uv(entry: Entry) -> None:
+    """Make `uv tool install` the default for Python tools. If any pip/pipx/uv
+    method names a package, canonicalize a single uv method that inherits the
+    most-trusted package name + source — so uv wins over pip/pipx/brew and uses
+    the README-verified package name rather than a guess."""
+    from .installed import pkg_from_command
+    from .installer import make
+
+    best_src, best_pkg = None, None
+    for m in entry.methods:
+        if m.kind in ("uv", "pipx", "pip"):
+            pkg = pkg_from_command(m.kind, m.command)
+            if pkg and (best_src is None
+                        or _SRC_ORDER.get(m.source, 9) < _SRC_ORDER.get(best_src, 9)):
+                best_src, best_pkg = m.source, pkg
+    if not best_pkg:
+        return
+    entry.methods = [m for m in entry.methods if m.kind != "uv"]
+    entry.methods.insert(0, make("uv", f"uv tool install {best_pkg}",
+                                 source=best_src, note="python tool"))
+
+
 def _parse(raw: str) -> Catalog:
     data = json.loads(raw)
+    entries = _dedupe([Entry.from_dict(e) for e in data.get("entries", [])])
+    for e in entries:
+        _prefer_uv(e)
     return Catalog(
-        entries=_dedupe([Entry.from_dict(e) for e in data.get("entries", [])]),
+        entries=entries,
         generated_at=data.get("generated_at", ""),
         source=data.get("source", ""),
     )
@@ -262,9 +290,5 @@ def _dedupe(entries: list[Entry]) -> list[Entry]:
 
 
 def load_from(path) -> Catalog:
-    data = json.loads(open(path).read())
-    return Catalog(
-        entries=[Entry.from_dict(e) for e in data.get("entries", [])],
-        generated_at=data.get("generated_at", ""),
-        source=data.get("source", ""),
-    )
+    with open(path) as f:
+        return _parse(f.read())
