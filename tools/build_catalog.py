@@ -72,6 +72,14 @@ FEATURED = [
         author_note="by Gheat · the design system tuistore itself is built on — run ricekit-gallery",
         methods=[("uv", "uv tool install git+https://github.com/Gheat1/ricekit", "official")],
     ),
+    dict(
+        name="haal", url="https://github.com/indium114/haal",
+        category="Dashboards", language="Rust",
+        description="A small, configurable system-fetch tool — clean, fast, and Rust.",
+        author_note="by @indium114 · a tiny, configurable fetch tool worth a look",
+        methods=[("cargo", "cargo install haal", "official"),
+                 ("cargo-binstall", "cargo binstall haal", "official")],
+    ),
 ]
 
 # ── popular terminal apps beyond awesome-tuis ────────────────────────────────
