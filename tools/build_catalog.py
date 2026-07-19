@@ -111,6 +111,13 @@ FEATURED = [
                  ("yay", "yay -S cwal-git", "official"),
                  ("nix", "nix profile install nixpkgs#cwal", "official")],
     ),
+    dict(
+        name="termheat", url="https://github.com/moeen-mahmud/termheat",
+        category="Dashboards", language="TypeScript",
+        description="An animated terminal heatmap of your GitHub contributions — zero auth, zero config, npx and done.",
+        author_note="by @moeen-mahmud · a satisfying way to watch your commit streak in the terminal",
+        methods=[("npm", "npm install -g termheat", "official")],
+    ),
 ]
 
 # ── popular terminal apps beyond awesome-tuis ────────────────────────────────

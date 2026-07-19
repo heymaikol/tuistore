@@ -1,7 +1,7 @@
 {
- "generated_at": "2026-07-19T06:01:42Z",
+ "generated_at": "2026-07-19T06:17:14Z",
  "source": "awesome-tuis (rothgar/awesome-tuis) + modern terminal essentials + Gheat suite",
- "count": 749,
+ "count": 750,
  "entries": [
   {
    "name": "ltui",
@@ -285,14 +285,37 @@
    ]
   },
   {
+   "name": "termheat",
+   "url": "https://github.com/moeen-mahmud/termheat",
+   "category": "Dashboards",
+   "language": "TypeScript",
+   "description": "An animated terminal heatmap of your GitHub contributions — zero auth, zero config, npx and done.",
+   "author_note": "by @moeen-mahmud · a satisfying way to watch your commit streak in the terminal",
+   "featured": true,
+   "stars": 3,
+   "archived": false,
+   "pushed_at": "2026-07-17T12:52:31Z",
+   "homepage": "https://www.npmjs.com/package/termheat",
+   "methods": [
+    {
+     "kind": "npm",
+     "command": "npm install -g termheat",
+     "source": "official",
+     "requires": [
+      "npm"
+     ]
+    }
+   ]
+  },
+  {
    "name": "opencode",
    "url": "https://github.com/sst/opencode",
    "description": "AI coding agent, built for the terminal",
    "category": "Development",
-   "stars": 187287,
+   "stars": 187292,
    "language": "TypeScript",
    "archived": false,
-   "pushed_at": "2026-07-19T05:35:46Z",
+   "pushed_at": "2026-07-19T06:16:05Z",
    "homepage": "https://opencode.ai",
    "methods": [
     {
@@ -404,7 +427,7 @@
    "url": "https://github.com/yt-dlp/yt-dlp",
    "description": "A feature-rich command-line audio/video downloader",
    "category": "Multimedia",
-   "stars": 178797,
+   "stars": 178799,
    "language": "Python",
    "archived": false,
    "pushed_at": "2026-07-14T14:14:21Z",
@@ -471,10 +494,10 @@
    "url": "https://github.com/neovim/neovim",
    "description": "Vim-fork focused on extensibility and usability",
    "category": "Editors",
-   "stars": 101241,
+   "stars": 101242,
    "language": "Vim Script",
    "archived": false,
-   "pushed_at": "2026-07-19T04:15:56Z",
+   "pushed_at": "2026-07-19T06:09:12Z",
    "homepage": "https://neovim.io",
    "methods": [
     {
@@ -502,7 +525,7 @@
    "url": "https://github.com/openai/codex",
    "description": "Lightweight coding agent that runs in your terminal",
    "category": "Development",
-   "stars": 99471,
+   "stars": 99476,
    "language": "Rust",
    "archived": false,
    "pushed_at": "2026-07-19T00:04:10Z",
@@ -1270,7 +1293,7 @@
    "url": "https://github.com/starship/starship",
    "description": "☄🌌️ The minimal, blazing-fast, and infinitely customizable prompt for any shell!",
    "category": "Shell & Prompt",
-   "stars": 58937,
+   "stars": 58938,
    "language": "Rust",
    "archived": false,
    "pushed_at": "2026-07-18T20:57:22Z",
@@ -1691,7 +1714,7 @@
    "url": "https://github.com/tmux/tmux",
    "description": "Terminal multiplexer",
    "category": "Productivity",
-   "stars": 47865,
+   "stars": 47866,
    "language": "C",
    "archived": false,
    "pushed_at": "2026-07-18T20:47:42Z",
@@ -2218,7 +2241,7 @@
    "url": "https://github.com/ajeetdsouza/zoxide",
    "description": "A smarter cd command. Supports all major shells.",
    "category": "Shell & Prompt",
-   "stars": 38097,
+   "stars": 38099,
    "language": "Rust",
    "archived": false,
    "pushed_at": "2026-07-16T12:23:25Z",
@@ -2981,7 +3004,7 @@
    "url": "https://github.com/dandavison/delta",
    "description": "A syntax-highlighting pager for git, diff, and grep output",
    "category": "Development",
-   "stars": 31494,
+   "stars": 31495,
    "language": "Rust",
    "archived": false,
    "pushed_at": "2026-07-05T21:23:27Z",
@@ -3532,7 +3555,7 @@
    "url": "https://github.com/charmbracelet/crush",
    "description": "The glamourous AI coding agent",
    "category": "Development",
-   "stars": 26613,
+   "stars": 26614,
    "language": "Go",
    "archived": false,
    "pushed_at": "2026-07-19T02:14:23Z",
@@ -7088,7 +7111,7 @@
    "url": "https://github.com/siderolabs/talos",
    "description": "A Linux distro with a TUI dashboard for local and remote usage",
    "category": "Dashboards",
-   "stars": 10797,
+   "stars": 10798,
    "language": "Go",
    "archived": false,
    "pushed_at": "2026-07-18T19:44:57Z",
@@ -7190,7 +7213,7 @@
    "description": "💻 C++ Functional Terminal User Interface. ❤️",
    "category": "Libraries",
    "language": "C++",
-   "stars": 10433,
+   "stars": 10434,
    "archived": false,
    "pushed_at": "2026-07-14T12:23:21Z",
    "homepage": "https://arthursonzogni.github.io/FTXUI/",
@@ -7211,7 +7234,7 @@
    "url": "https://github.com/hatoo/oha",
    "description": "HTTP load generator",
    "category": "Miscellaneous",
-   "stars": 10427,
+   "stars": 10428,
    "language": "Rust",
    "archived": false,
    "pushed_at": "2026-07-11T09:13:26Z",
@@ -8037,7 +8060,7 @@
    "stars": 7890,
    "language": "Rust",
    "archived": false,
-   "pushed_at": "2026-07-19T05:58:57Z",
+   "pushed_at": "2026-07-19T06:12:48Z",
    "homepage": "https://getfresh.dev/",
    "methods": [
     {
@@ -14587,7 +14610,7 @@
    "description": "A Python wrapper lib for ncurses that makes your code pretty to look at",
    "category": "Libraries",
    "language": "Python",
-   "stars": 1484,
+   "stars": 1485,
    "archived": false,
    "pushed_at": "2025-08-28T12:20:17Z",
    "homepage": "http://pypi.python.org/pypi/blessings",
@@ -17350,7 +17373,7 @@
    "url": "https://github.com/Strophox/tetro-tui",
    "description": "A very configurable tetris-like, featuring ASCII particles, replays and more.",
    "category": "Games",
-   "stars": 726,
+   "stars": 727,
    "language": "Rust",
    "archived": false,
    "pushed_at": "2026-06-02T14:28:56Z",
@@ -20124,7 +20147,7 @@
    "stars": 284,
    "language": "Go",
    "archived": false,
-   "pushed_at": "2026-07-19T05:58:02Z",
+   "pushed_at": "2026-07-19T06:12:01Z",
    "methods": [
     {
      "kind": "go",
