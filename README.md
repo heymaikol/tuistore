@@ -60,12 +60,19 @@ curl -fsSL https://raw.githubusercontent.com/Gheat1/tuistore/main/install.sh | s
 brew install gheat1/tuistore/tuistore
 ```
 
-**Or pick your own package manager:**
+**Or straight from PyPI:**
 
 ```sh
-uv tool install git+https://github.com/Gheat1/tuistore     # recommended
+uv tool install tuistore     # recommended
+pipx install tuistore
+pip install tuistore
+```
+
+**Latest `main` instead of the last release:**
+
+```sh
+uv tool install git+https://github.com/Gheat1/tuistore
 pipx install git+https://github.com/Gheat1/tuistore
-pip install git+https://github.com/Gheat1/tuistore
 ```
 
 **Arch Linux (AUR):** coming soon — package definition is ready in
