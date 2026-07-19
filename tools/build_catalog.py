@@ -80,6 +80,24 @@ FEATURED = [
         methods=[("cargo", "cargo install haal", "official"),
                  ("cargo-binstall", "cargo binstall haal", "official")],
     ),
+    dict(
+        name="rmcl", url="https://github.com/objz/rmcl",
+        category="Games", language="Rust",
+        description="A Minecraft TUI/CLI launcher written in Rust — launch the game from your terminal.",
+        author_note="by @objz · a Minecraft launcher that lives in the terminal",
+        methods=[("brew", "brew install objz/tap/rmcl", "official"),
+                 ("cargo", "cargo install rmcl", "official"),
+                 ("yay", "yay -S rmcl", "official")],
+    ),
+    dict(
+        name="Tomato.C", url="https://github.com/gabrielzschmitz/Tomato.C",
+        category="Productivity", language="C",
+        description="A pomodoro timer written in pure C — simple, focused, terminal-native.",
+        author_note="by @gabrielzschmitz · a tiny pomodoro timer in pure C",
+        methods=[("source",
+                  "git clone https://github.com/gabrielzschmitz/Tomato.C && cd Tomato.C && sudo ./build.sh --install",
+                  "official")],
+    ),
 ]
 
 # ── popular terminal apps beyond awesome-tuis ────────────────────────────────
