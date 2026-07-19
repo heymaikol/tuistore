@@ -1,7 +1,7 @@
 {
- "generated_at": "2026-07-19T02:10:08Z",
+ "generated_at": "2026-07-19T03:11:38Z",
  "source": "awesome-tuis (rothgar/awesome-tuis) + modern terminal essentials + Gheat suite",
- "count": 747,
+ "count": 748,
  "entries": [
   {
    "name": "ltui",
@@ -182,7 +182,7 @@
    "description": "A cross-platform network-troubleshooting TUI — pinpoints DNS, TCP, TLS, HTTP and proxy failures, and suggests fixes.",
    "author_note": "by @heymaikol · diagnoses network failures and tells you how to fix them",
    "featured": true,
-   "stars": 3,
+   "stars": 4,
    "archived": false,
    "pushed_at": "2026-07-18T21:49:59Z",
    "methods": [
@@ -219,14 +219,36 @@
    ]
   },
   {
+   "name": "mcserver-setup",
+   "url": "https://github.com/NolanCotter/mcserver-setup",
+   "category": "Games",
+   "language": "Rust",
+   "description": "A polished terminal wizard for creating a reproducible Paper Minecraft server — turns plain-language choices into ready-to-run Docker Compose or native Java server files.",
+   "author_note": "by @NolanCotter · stand up a Minecraft server without the usual yak-shaving",
+   "featured": true,
+   "stars": 2,
+   "archived": false,
+   "pushed_at": "2026-07-16T20:55:05Z",
+   "methods": [
+    {
+     "kind": "source",
+     "command": "git clone https://github.com/NolanCotter/mcserver-setup && cd mcserver-setup && cargo run --release",
+     "source": "official",
+     "requires": [
+      "git"
+     ]
+    }
+   ]
+  },
+  {
    "name": "opencode",
    "url": "https://github.com/sst/opencode",
    "description": "AI coding agent, built for the terminal",
    "category": "Development",
-   "stars": 187245,
+   "stars": 187258,
    "language": "TypeScript",
    "archived": false,
-   "pushed_at": "2026-07-19T01:52:46Z",
+   "pushed_at": "2026-07-19T03:09:10Z",
    "homepage": "https://opencode.ai",
    "methods": [
     {
@@ -338,7 +360,7 @@
    "url": "https://github.com/yt-dlp/yt-dlp",
    "description": "A feature-rich command-line audio/video downloader",
    "category": "Multimedia",
-   "stars": 178770,
+   "stars": 178780,
    "language": "Python",
    "archived": false,
    "pushed_at": "2026-07-14T14:14:21Z",
@@ -408,7 +430,7 @@
    "stars": 101236,
    "language": "Vim Script",
    "archived": false,
-   "pushed_at": "2026-07-19T02:04:06Z",
+   "pushed_at": "2026-07-19T02:33:25Z",
    "homepage": "https://neovim.io",
    "methods": [
     {
@@ -436,7 +458,7 @@
    "url": "https://github.com/openai/codex",
    "description": "Lightweight coding agent that runs in your terminal",
    "category": "Development",
-   "stars": 99429,
+   "stars": 99439,
    "language": "Rust",
    "archived": false,
    "pushed_at": "2026-07-19T00:04:10Z",
@@ -592,7 +614,7 @@
    "url": "https://github.com/junegunn/fzf",
    "description": "A general-purpose command-line fuzzy finder",
    "category": "Miscellaneous",
-   "stars": 81833,
+   "stars": 81834,
    "language": "Go",
    "archived": false,
    "pushed_at": "2026-07-18T12:54:22Z",
@@ -738,7 +760,7 @@
    "url": "https://github.com/jesseduffield/lazygit",
    "description": "Simple terminal UI for git commands",
    "category": "Development",
-   "stars": 80500,
+   "stars": 80499,
    "language": "Go",
    "archived": false,
    "pushed_at": "2026-07-18T20:50:11Z",
@@ -1204,7 +1226,7 @@
    "url": "https://github.com/starship/starship",
    "description": "☄🌌️ The minimal, blazing-fast, and infinitely customizable prompt for any shell!",
    "category": "Shell & Prompt",
-   "stars": 58934,
+   "stars": 58936,
    "language": "Rust",
    "archived": false,
    "pushed_at": "2026-07-18T20:57:22Z",
@@ -1347,7 +1369,7 @@
    "url": "https://github.com/rclone/rclone",
    "description": "\"rsync for cloud storage\" - Google Drive, S3, Dropbox, Backblaze B2, One Drive, Swift, Hubic, Wasabi, Google Cloud Storage, Azure Blob, Azure Files, Yandex Files",
    "category": "CLI Tools",
-   "stars": 58405,
+   "stars": 58404,
    "language": "Go",
    "archived": false,
    "pushed_at": "2026-07-18T08:32:23Z",
@@ -1625,7 +1647,7 @@
    "url": "https://github.com/tmux/tmux",
    "description": "Terminal multiplexer",
    "category": "Productivity",
-   "stars": 47863,
+   "stars": 47864,
    "language": "C",
    "archived": false,
    "pushed_at": "2026-07-18T20:47:42Z",
@@ -1655,7 +1677,7 @@
    "url": "https://github.com/helix-editor/helix",
    "description": "A post-modern modal text editor.",
    "category": "Editors",
-   "stars": 45514,
+   "stars": 45513,
    "language": "Rust",
    "archived": false,
    "pushed_at": "2026-07-16T16:30:31Z",
@@ -1704,7 +1726,7 @@
    "url": "https://github.com/cli/cli",
    "description": "GitHub’s official command line tool",
    "category": "Development",
-   "stars": 45319,
+   "stars": 45320,
    "language": "Go",
    "archived": false,
    "pushed_at": "2026-07-17T10:18:56Z",
@@ -1774,7 +1796,7 @@
    "url": "https://github.com/sharkdp/fd",
    "description": "A simple, fast and user-friendly alternative to 'find'",
    "category": "CLI Tools",
-   "stars": 43781,
+   "stars": 43780,
    "language": "Rust",
    "archived": false,
    "pushed_at": "2026-07-15T20:22:26Z",
@@ -1974,7 +1996,7 @@
    "url": "https://github.com/sxyazi/yazi",
    "description": "Blazing fast terminal file manager written in Rust, based on async I/O.",
    "category": "File Managers",
-   "stars": 40465,
+   "stars": 40466,
    "language": "Rust",
    "archived": false,
    "pushed_at": "2026-07-16T19:22:27Z",
@@ -2509,7 +2531,7 @@
    "url": "https://github.com/casey/just",
    "description": "🤖 Just a command runner",
    "category": "Development",
-   "stars": 34817,
+   "stars": 34818,
    "language": "Rust",
    "archived": false,
    "pushed_at": "2026-07-19T01:57:26Z",
@@ -2866,7 +2888,7 @@
    "url": "https://github.com/nicolargo/glances",
    "description": "Glances an Eye on your system. A top/htop alternative.",
    "category": "Dashboards",
-   "stars": 33126,
+   "stars": 33127,
    "language": "Python",
    "archived": false,
    "pushed_at": "2026-07-18T16:26:30Z",
@@ -2964,7 +2986,7 @@
    "url": "https://github.com/atuinsh/atuin",
    "description": "✨ Making your shell magical",
    "category": "Shell & Prompt",
-   "stars": 30630,
+   "stars": 30629,
    "language": "Rust",
    "archived": false,
    "pushed_at": "2026-07-19T01:43:50Z",
@@ -3359,7 +3381,7 @@
    "url": "https://github.com/gitleaks/gitleaks",
    "description": "Find secrets with Gitleaks 🔑",
    "category": "Development",
-   "stars": 28196,
+   "stars": 28198,
    "language": "Go",
    "archived": false,
    "pushed_at": "2026-07-15T04:12:57Z",
@@ -3466,10 +3488,10 @@
    "url": "https://github.com/charmbracelet/crush",
    "description": "The glamourous AI coding agent",
    "category": "Development",
-   "stars": 26610,
+   "stars": 26611,
    "language": "Go",
    "archived": false,
-   "pushed_at": "2026-07-19T02:00:42Z",
+   "pushed_at": "2026-07-19T02:14:23Z",
    "methods": [
     {
      "kind": "brew",
@@ -4027,7 +4049,7 @@
    "url": "https://github.com/JanDeDobbeleer/oh-my-posh",
    "description": "The most customisable and low-latency cross platform/shell prompt renderer",
    "category": "Shell & Prompt",
-   "stars": 23075,
+   "stars": 23074,
    "language": "Go",
    "archived": false,
    "pushed_at": "2026-07-18T19:06:46Z",
@@ -4067,7 +4089,7 @@
    "url": "https://github.com/eza-community/eza",
    "description": "A modern alternative to ls",
    "category": "CLI Tools",
-   "stars": 22662,
+   "stars": 22664,
    "language": "Rust",
    "archived": false,
    "pushed_at": "2026-07-09T10:23:41Z",
@@ -4235,7 +4257,7 @@
    "description": "A Rust crate for building Terminal UIs (actively maintained fork of tui-rs).",
    "category": "Libraries",
    "language": "Rust",
-   "stars": 21771,
+   "stars": 21772,
    "archived": false,
    "pushed_at": "2026-07-15T16:32:17Z",
    "homepage": "https://ratatui.rs",
@@ -4304,7 +4326,7 @@
    "url": "https://github.com/allinurl/goaccess",
    "description": "GoAccess is a real-time web log analyzer and interactive viewer that runs in a terminal in nix systems or through your browser.",
    "category": "Dashboards",
-   "stars": 20715,
+   "stars": 20716,
    "language": "C",
    "archived": false,
    "pushed_at": "2026-07-18T23:04:55Z",
@@ -5178,7 +5200,7 @@
    "url": "https://github.com/muesli/duf",
    "description": "Disk Usage/Free Utility - a better 'df' alternative",
    "category": "Dashboards",
-   "stars": 15200,
+   "stars": 15201,
    "language": "Go",
    "archived": false,
    "pushed_at": "2026-01-13T11:07:14Z",
@@ -5293,7 +5315,7 @@
    "url": "https://github.com/ast-grep/ast-grep",
    "description": "⚡A CLI tool for code structural search, lint and rewriting. Written in Rust",
    "category": "Development",
-   "stars": 15119,
+   "stars": 15120,
    "language": "Rust",
    "archived": false,
    "pushed_at": "2026-07-18T23:40:23Z",
@@ -8635,7 +8657,7 @@
    "url": "https://github.com/aome510/spotify-player",
    "description": "A Spotify player in the terminal with full feature parity",
    "category": "Multimedia",
-   "stars": 6963,
+   "stars": 6964,
    "language": "Rust",
    "archived": false,
    "pushed_at": "2026-07-02T20:46:14Z",
@@ -9318,7 +9340,7 @@
    "url": "https://github.com/alexpasmantier/television",
    "description": "A fast and versatile fuzzy finder TUI",
    "category": "Productivity",
-   "stars": 6101,
+   "stars": 6100,
    "language": "Rust",
    "archived": false,
    "pushed_at": "2026-07-18T18:56:42Z",
@@ -10938,7 +10960,7 @@
    "url": "https://github.com/ouch-org/ouch",
    "description": "Painless compression and decompression in the terminal",
    "category": "CLI Tools",
-   "stars": 3667,
+   "stars": 3668,
    "language": "Rust",
    "archived": false,
    "pushed_at": "2026-07-18T22:21:16Z",
@@ -11442,7 +11464,7 @@
    "url": "https://github.com/util-linux/util-linux",
    "description": "TUI partition editor included in util-linux",
    "category": "Miscellaneous",
-   "stars": 3188,
+   "stars": 3189,
    "language": "C",
    "archived": false,
    "pushed_at": "2026-07-15T11:21:41Z",
@@ -11812,6 +11834,45 @@
    ]
   },
   {
+   "name": "Tabiew",
+   "url": "https://github.com/shshemi/tabiew",
+   "description": "A lightweight app to view and query tabular data files, such as CSV, TSV, and parquet.",
+   "category": "Productivity",
+   "stars": 3014,
+   "language": "Rust",
+   "archived": false,
+   "pushed_at": "2026-07-17T18:08:13Z",
+   "methods": [
+    {
+     "kind": "cargo",
+     "command": "cargo install tabiew",
+     "source": "inferred",
+     "requires": [
+      "cargo"
+     ],
+     "note": "guessed from repo name"
+    },
+    {
+     "kind": "cargo-binstall",
+     "command": "cargo binstall tabiew",
+     "source": "inferred",
+     "requires": [
+      "cargo-binstall"
+     ],
+     "note": "guessed from repo name"
+    },
+    {
+     "kind": "source",
+     "command": "git clone https://github.com/shshemi/tabiew && cd tabiew",
+     "source": "inferred",
+     "requires": [
+      "git"
+     ],
+     "note": "then build per the README"
+    }
+   ]
+  },
+  {
    "name": "urwid",
    "url": "https://github.com/urwid/urwid",
    "description": "A console user interface library for Python on Linux, OSX, Cygwin or other unix-like OS.",
@@ -11843,45 +11904,6 @@
     {
      "kind": "source",
      "command": "git clone https://github.com/urwid/urwid && cd urwid",
-     "source": "inferred",
-     "requires": [
-      "git"
-     ],
-     "note": "then build per the README"
-    }
-   ]
-  },
-  {
-   "name": "Tabiew",
-   "url": "https://github.com/shshemi/tabiew",
-   "description": "A lightweight app to view and query tabular data files, such as CSV, TSV, and parquet.",
-   "category": "Productivity",
-   "stars": 3013,
-   "language": "Rust",
-   "archived": false,
-   "pushed_at": "2026-07-17T18:08:13Z",
-   "methods": [
-    {
-     "kind": "cargo",
-     "command": "cargo install tabiew",
-     "source": "inferred",
-     "requires": [
-      "cargo"
-     ],
-     "note": "guessed from repo name"
-    },
-    {
-     "kind": "cargo-binstall",
-     "command": "cargo binstall tabiew",
-     "source": "inferred",
-     "requires": [
-      "cargo-binstall"
-     ],
-     "note": "guessed from repo name"
-    },
-    {
-     "kind": "source",
-     "command": "git clone https://github.com/shshemi/tabiew && cd tabiew",
      "source": "inferred",
      "requires": [
       "git"
@@ -12106,7 +12128,7 @@
    "url": "https://github.com/ravachol/kew",
    "description": "A terminal music player for Linux",
    "category": "Multimedia",
-   "stars": 2892,
+   "stars": 2893,
    "language": "C",
    "archived": false,
    "pushed_at": "2026-07-18T20:20:19Z",
@@ -14229,7 +14251,7 @@
    "url": "https://github.com/lissy93/AdGuardian-Term",
    "description": "A TUI dashboard for monitoring real-time traffic from an AdGuard Home instance",
    "category": "Dashboards",
-   "stars": 1588,
+   "stars": 1589,
    "language": "Rust",
    "archived": false,
    "pushed_at": "2026-05-31T13:52:15Z",
@@ -14694,7 +14716,7 @@
    "description": "Rust crate for beautiful, artisanally crafted TUIs and text-based IO, with a declarative, React-like API inspired by Ink.",
    "category": "Libraries",
    "language": "Rust",
-   "stars": 1364,
+   "stars": 1365,
    "archived": false,
    "pushed_at": "2026-07-13T18:50:42Z",
    "homepage": "https://crates.io/crates/iocraft",
@@ -14896,7 +14918,7 @@
    "stars": 1287,
    "language": "Go",
    "archived": false,
-   "pushed_at": "2026-07-18T22:48:00Z",
+   "pushed_at": "2026-07-19T03:06:36Z",
    "homepage": "https://snips.sh",
    "methods": [
     {
@@ -15699,7 +15721,7 @@
    "url": "https://github.com/bugzmanov/bookokrat",
    "description": "Full-featured EPUB books reader with Vim keybindings.",
    "category": "Multimedia",
-   "stars": 1045,
+   "stars": 1046,
    "language": "Rust",
    "archived": false,
    "pushed_at": "2026-06-25T05:22:07Z",
@@ -16679,7 +16701,7 @@
    "url": "https://github.com/mzivic7/endcord",
    "description": "Feature rich Discord TUI client.",
    "category": "Messaging",
-   "stars": 899,
+   "stars": 900,
    "language": "Python",
    "archived": false,
    "pushed_at": "2026-07-18T17:28:08Z",
@@ -18628,7 +18650,7 @@
    "stars": 474,
    "language": "Rust",
    "archived": false,
-   "pushed_at": "2026-07-19T01:47:56Z",
+   "pushed_at": "2026-07-19T02:48:08Z",
    "homepage": "https://reyamira.github.io/models/",
    "methods": [
     {
@@ -18786,7 +18808,7 @@
    "url": "https://github.com/2ykwang/mac-cleanup-go",
    "description": "MacOS disk cleanup TUI: scan cache/dev artifacts, preview, exclude, and move items to Trash.",
    "category": "Miscellaneous",
-   "stars": 435,
+   "stars": 436,
    "language": "Go",
    "archived": false,
    "pushed_at": "2026-07-09T03:04:49Z",
@@ -19091,7 +19113,7 @@
    "stars": 389,
    "language": "Python",
    "archived": false,
-   "pushed_at": "2026-07-19T00:58:38Z",
+   "pushed_at": "2026-07-19T03:05:57Z",
    "homepage": "https://nspc911.github.io/rovr/",
    "methods": [
     {

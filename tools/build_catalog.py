@@ -93,6 +93,15 @@ FEATURED = [
                  ("yay", "yay -S network-doctor", "official"),
                  ("go", "go install github.com/heymaikol/network-doctor@latest", "official")],
     ),
+    dict(
+        name="mcserver-setup", url="https://github.com/NolanCotter/mcserver-setup",
+        category="Games", language="Rust",
+        description="A polished terminal wizard for creating a reproducible Paper Minecraft server — turns plain-language choices into ready-to-run Docker Compose or native Java server files.",
+        author_note="by @NolanCotter · stand up a Minecraft server without the usual yak-shaving",
+        methods=[("source",
+                  "git clone https://github.com/NolanCotter/mcserver-setup && cd mcserver-setup && cargo run --release",
+                  "official")],
+    ),
 ]
 
 # ── popular terminal apps beyond awesome-tuis ────────────────────────────────
