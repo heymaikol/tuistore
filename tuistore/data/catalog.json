@@ -1,7 +1,7 @@
 {
- "generated_at": "2026-07-19T07:32:39Z",
+ "generated_at": "2026-07-19T07:38:45Z",
  "source": "awesome-tuis (rothgar/awesome-tuis) + modern terminal essentials + Gheat suite",
- "count": 750,
+ "count": 752,
  "entries": [
   {
    "name": "ltui",
@@ -525,7 +525,7 @@
    "url": "https://github.com/openai/codex",
    "description": "Lightweight coding agent that runs in your terminal",
    "category": "Development",
-   "stars": 99488,
+   "stars": 99490,
    "language": "Rust",
    "archived": false,
    "pushed_at": "2026-07-19T00:04:10Z",
@@ -827,7 +827,7 @@
    "url": "https://github.com/jesseduffield/lazygit",
    "description": "Simple terminal UI for git commands",
    "category": "Development",
-   "stars": 80506,
+   "stars": 80505,
    "language": "Go",
    "archived": false,
    "pushed_at": "2026-07-19T07:30:34Z",
@@ -1633,7 +1633,7 @@
    "url": "https://github.com/jesseduffield/lazydocker",
    "description": "The lazier way to manage everything docker",
    "category": "Docker/LXC/K8s",
-   "stars": 52084,
+   "stars": 52085,
    "language": "Go",
    "archived": false,
    "pushed_at": "2026-04-19T02:51:06Z",
@@ -1834,7 +1834,7 @@
    "description": "A Go framework based on Elm to build functional and fun terminal apps",
    "category": "Libraries",
    "language": "Go",
-   "stars": 43822,
+   "stars": 43823,
    "archived": false,
    "pushed_at": "2026-07-13T09:02:49Z",
    "methods": [
@@ -2665,7 +2665,7 @@
    "url": "https://github.com/zellij-org/zellij",
    "description": "A terminal workspace with batteries included",
    "category": "Productivity",
-   "stars": 34357,
+   "stars": 34356,
    "language": "Rust",
    "archived": false,
    "pushed_at": "2026-07-18T09:15:17Z",
@@ -3056,7 +3056,7 @@
    "stars": 30633,
    "language": "Rust",
    "archived": false,
-   "pushed_at": "2026-07-19T07:21:28Z",
+   "pushed_at": "2026-07-19T07:34:34Z",
    "homepage": "https://atuin.sh",
    "methods": [
     {
@@ -5990,7 +5990,7 @@
    "stars": 12837,
    "language": "Rust",
    "archived": false,
-   "pushed_at": "2026-07-18T15:53:50Z",
+   "pushed_at": "2026-07-19T07:36:38Z",
    "methods": [
     {
      "kind": "cargo",
@@ -7143,7 +7143,7 @@
    "description": "Minimalist Go package aimed at creating Console User Interfaces",
    "category": "Libraries",
    "language": "Go",
-   "stars": 10596,
+   "stars": 10595,
    "archived": false,
    "pushed_at": "2025-05-01T12:16:55Z",
    "methods": [
@@ -12462,7 +12462,7 @@
    "url": "https://github.com/pvolok/mprocs",
    "description": "Run multiple commands in parallel",
    "category": "Development",
-   "stars": 2672,
+   "stars": 2673,
    "language": "Rust",
    "archived": false,
    "pushed_at": "2026-07-18T14:08:55Z",
@@ -20546,6 +20546,78 @@
    ]
   },
   {
+   "name": "flow",
+   "url": "https://github.com/programmersd21/flow",
+   "description": "🌊 see your network breathe",
+   "category": "Dashboards",
+   "stars": 252,
+   "language": "Go",
+   "archived": false,
+   "pushed_at": "2026-07-16T03:06:32Z",
+   "methods": [
+    {
+     "kind": "yay",
+     "command": "yay -S flow-network-monitor-bin",
+     "source": "readme",
+     "requires": [
+      "yay"
+     ],
+     "os": [
+      "linux"
+     ],
+     "families": [
+      "arch"
+     ],
+     "note": "from README"
+    },
+    {
+     "kind": "brew",
+     "command": "brew install programmersd21/flow/flow",
+     "source": "readme",
+     "requires": [
+      "brew"
+     ],
+     "note": "from README"
+    },
+    {
+     "kind": "go",
+     "command": "go install github.com/programmersd21/flow/cmd/flow@latest",
+     "source": "readme",
+     "requires": [
+      "go"
+     ],
+     "note": "from README"
+    },
+    {
+     "kind": "go",
+     "command": "go install github.com/programmersd21/flow@latest",
+     "source": "inferred",
+     "requires": [
+      "go"
+     ],
+     "note": "module path from repo"
+    },
+    {
+     "kind": "source",
+     "command": "git clone https://github.com/programmersd21/flow && cd flow",
+     "source": "inferred",
+     "requires": [
+      "git"
+     ],
+     "note": "then build per the README"
+    },
+    {
+     "kind": "brew",
+     "command": "brew install flow",
+     "source": "inferred",
+     "requires": [
+      "brew"
+     ],
+     "note": "homebrew"
+    }
+   ]
+  },
+  {
    "name": "SharpConsoleUI",
    "url": "https://github.com/nickprotop/ConsoleEx",
    "description": "Multi-window TUI framework for .NET with overlapping windows, compositor effects, and Spectre.Console integration",
@@ -27078,6 +27150,60 @@
       "git"
      ],
      "note": "then build per the README"
+    }
+   ]
+  },
+  {
+   "name": "wlocks",
+   "url": "https://github.com/programmersd21/wlocks",
+   "description": "📂 see which processes hold your files open: a smooth tui alternative to lsof/fuser with auto-refresh, fuzzy search, sort modes, and themes",
+   "category": "Dashboards",
+   "stars": 13,
+   "language": "Go",
+   "archived": false,
+   "pushed_at": "2026-07-15T11:26:09Z",
+   "methods": [
+    {
+     "kind": "yay",
+     "command": "yay -S wlocks-bin",
+     "source": "readme",
+     "requires": [
+      "yay"
+     ],
+     "os": [
+      "linux"
+     ],
+     "families": [
+      "arch"
+     ],
+     "note": "from README"
+    },
+    {
+     "kind": "go",
+     "command": "go install github.com/programmersd21/wlocks@latest",
+     "source": "inferred",
+     "requires": [
+      "go"
+     ],
+     "note": "module path from repo"
+    },
+    {
+     "kind": "source",
+     "command": "git clone https://github.com/programmersd21/wlocks && cd wlocks",
+     "source": "inferred",
+     "requires": [
+      "git"
+     ],
+     "note": "then build per the README"
+    },
+    {
+     "kind": "brew",
+     "command": "brew install wlocks",
+     "source": "inferred",
+     "requires": [
+      "brew"
+     ],
+     "note": "homebrew"
     }
    ]
   },

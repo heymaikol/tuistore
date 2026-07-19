@@ -217,6 +217,8 @@ ESSENTIALS: list[tuple[str, str, str]] = [
     ("bottom", "https://github.com/ClementTsang/bottom", "Dashboards"),
     ("bandwhich", "https://github.com/imsnif/bandwhich", "Dashboards"),
     ("gping", "https://github.com/orf/gping", "Dashboards"),
+    ("wlocks", "https://github.com/programmersd21/wlocks", "Dashboards"),
+    ("flow", "https://github.com/programmersd21/flow", "Dashboards"),
     # File Managers
     ("yazi", "https://github.com/sxyazi/yazi", "File Managers"),
     ("nnn", "https://github.com/jarun/nnn", "File Managers"),
