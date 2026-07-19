@@ -98,6 +98,15 @@ FEATURED = [
                   "git clone https://github.com/gabrielzschmitz/Tomato.C && cd Tomato.C && sudo ./build.sh --install",
                   "official")],
     ),
+    dict(
+        name="network-doctor", url="https://github.com/heymaikol/network-doctor",
+        category="Dashboards", language="Go",
+        description="A cross-platform network-troubleshooting TUI — pinpoints DNS, TCP, TLS, HTTP and proxy failures, and suggests fixes.",
+        author_note="by @heymaikol · diagnoses network failures and tells you how to fix them",
+        methods=[("brew", "brew install --cask heymaikol/tap/network-doctor", "official"),
+                 ("yay", "yay -S network-doctor", "official"),
+                 ("go", "go install github.com/heymaikol/network-doctor@latest", "official")],
+    ),
 ]
 
 # ── popular terminal apps beyond awesome-tuis ────────────────────────────────
