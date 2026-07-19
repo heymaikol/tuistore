@@ -22,3 +22,8 @@ uv.lock
 
 # local assistant tooling (not part of the project)
 .claude/
+
+# raw / draft video assets — too large or superseded by assets/demo.gif
+assets/tuistore.mp4
+assets/tuistore.gif
+assets/tuistorelow.gif
