@@ -1,0 +1,35 @@
+# Maintainer: Gheat <skyegamer367@gmail.com>
+pkgname=tuistore
+pkgver=0.4.1
+pkgrel=1
+pkgdesc="TUI app store — browse, search, and one-key-install terminal apps"
+arch=('any')
+url="https://github.com/Gheat1/tuistore"
+license=('GPL-3.0-or-later')
+depends=('python')
+makedepends=('uv')
+source=("$pkgname-$pkgver.tar.gz::https://github.com/Gheat1/tuistore/archive/refs/tags/v$pkgver.tar.gz")
+sha256sums=('827b68799b90536bf12b6e998ccf31eb0f56c8f57cf89eef0adf98a5db3ec464')
+
+# tuistore depends on ricekit (github.com/Gheat1/ricekit), which isn't
+# packaged for Arch or PyPI — a private venv is the simplest correct way to
+# satisfy that without vendoring or re-packaging ricekit separately.
+package() {
+    cd "$pkgname-$pkgver"
+
+    install -d "$pkgdir/opt/$pkgname"
+    uv venv --python python3 "$pkgdir/opt/$pkgname/venv"
+    uv pip install --python "$pkgdir/opt/$pkgname/venv/bin/python" .
+
+    # invoke the venv's python directly (-m) rather than relying on the
+    # auto-generated entry-point script, whose shebang bakes in the
+    # build-time $pkgdir staging path and would break once installed
+    install -d "$pkgdir/usr/bin"
+    cat > "$pkgdir/usr/bin/$pkgname" <<'EOF'
+#!/bin/sh
+exec /opt/tuistore/venv/bin/python -m tuistore "$@"
+EOF
+    chmod 755 "$pkgdir/usr/bin/$pkgname"
+
+    install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

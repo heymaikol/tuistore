@@ -68,6 +68,9 @@ pipx install git+https://github.com/Gheat1/tuistore
 pip install git+https://github.com/Gheat1/tuistore
 ```
 
+**Arch Linux (AUR):** coming soon — package definition is ready in
+[`packaging/aur/`](packaging/aur/), pending submission.
+
 Then just run:
 
 ```sh
