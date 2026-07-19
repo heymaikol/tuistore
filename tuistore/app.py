@@ -689,6 +689,128 @@ class ManageModal(ModalScreen):
         self.dismiss(None)
 
 
+# ── first-boot welcome / support ─────────────────────────────────────────────
+# the rest of Gheat's suite (tuistore is offered on its own button)
+SUITE_REPOS = [
+    ("runpantheon", "ltui"),
+    ("Gheat1", "jtui"),
+    ("Gheat1", "sctui"),
+    ("Gheat1", "NaviTui"),
+    ("Gheat1", "ricekit"),
+]
+
+
+class WelcomeModal(ModalScreen):
+    """Shown once, on the very first launch. A gentle ask for a star."""
+
+    BINDINGS = [
+        Binding("escape", "close", show=False),
+        Binding("q", "close", show=False),
+    ]
+
+    DEFAULT_CSS = """
+    WelcomeModal { align: center middle; background: $kit-overlay; }
+    WelcomeModal #wbox {
+        width: 66; max-width: 92%; height: auto;
+        background: $kit-modal-bg; border: round $kit-border-focus; padding: 1 2;
+    }
+    WelcomeModal #wtitle { padding: 0 0 1 0; }
+    WelcomeModal #wbody { height: auto; padding: 0 1 1 1; }
+    WelcomeModal #wlist { height: auto; margin: 1 0 0 0; }
+    WelcomeModal #whint { padding: 1 1 0 1; }
+    """
+
+    def compose(self) -> ComposeResult:
+        with Vertical(id="wbox"):
+            yield Static(id="wtitle")
+            yield Static(id="wbody")
+            yield NavList(id="wlist")
+            yield Static(id="whint")
+
+    def _opt(self, glyph: str, text: str, color: str, oid: str) -> Option:
+        row = Text()
+        row.append(f"  {glyph}  ", style=color)
+        row.append(text, style=palette.text)
+        return Option(row, id=oid)
+
+    def on_mount(self) -> None:
+        p = palette
+        pop_in(self.query_one("#wbox"))
+        title = Text()
+        title.append("\U0001f44b  ", style=p.peach)
+        title.append("welcome to tuistore", style=f"bold {p.text}")
+        self.query_one("#wtitle", Static).update(title)
+        body = Text()
+        body.append("thanks for installing! it's free and open source, made by one person.\n\n",
+                    style=p.sub)
+        body.append("if it's useful, a ", style=p.sub)
+        body.append("★ star", style=p.peach)
+        body.append(" genuinely makes my day — it's the single biggest thing that helps "
+                    "tuistore grow. the little suite it's built on could use some love too. "
+                    "no pressure at all \U0001f49b", style=p.sub)
+        self.query_one("#wbody", Static).update(body)
+        ol = self.query_one("#wlist", NavList)
+        ol.add_options([
+            self._opt("★", "star tuistore", p.peach, "star"),
+            self._opt("★", "star the rest of the suite (ltui, ricekit, …)", p.peach, "suite"),
+            self._opt("✚", "follow @Gheat1 on GitHub", p.blue, "follow"),
+        ])
+        ol.highlighted = 0
+        ol.focus()
+        hint = ("enter to do it  ·  esc — maybe later  ·  star any tool anytime with s"
+                if github.available()
+                else "auth the gh CLI (gh auth login) to do this from here  ·  esc to continue")
+        self.query_one("#whint", Static).update(Text(hint, style=p.dim))
+
+    @on(NavList.OptionSelected, "#wlist")
+    def _selected(self, event: NavList.OptionSelected) -> None:
+        if not github.available():
+            self.app.notify("run `gh auth login` first, then use s on any tool",
+                            severity="warning")
+            return
+        oid, idx = event.option.id, event.option_index
+        if oid == "star":
+            self._star_one("Gheat1", "tuistore", "tuistore", idx)
+        elif oid == "suite":
+            self._star_suite(idx)
+        elif oid == "follow":
+            self._follow(idx)
+
+    def _done(self, idx: int, text: str) -> None:
+        row = Text()
+        row.append("  ✓  ", style=palette.green)
+        row.append(text, style=palette.green)
+        self.query_one("#wlist", NavList).replace_option_prompt_at_index(idx, row)
+
+    @work(group="welcome")
+    async def _star_one(self, owner: str, repo: str, label: str, idx: int) -> None:
+        if await github.star(owner, repo):
+            self._done(idx, f"starred {label} — thank you!")
+            self.app.notify(f"★ starred {label} — you're the best!")
+        else:
+            self.app.notify(f"couldn't star {label} (check gh auth)", severity="warning")
+
+    @work(group="welcome")
+    async def _star_suite(self, idx: int) -> None:
+        done = 0
+        for owner, repo in SUITE_REPOS:
+            if await github.star(owner, repo):
+                done += 1
+        self._done(idx, f"starred {done} suite repos — legend!")
+        self.app.notify(f"★ starred {done} suite repos — thank you so much!")
+
+    @work(group="welcome")
+    async def _follow(self, idx: int) -> None:
+        if await github.follow("Gheat1"):
+            self._done(idx, "following @Gheat1 — thanks!")
+            self.app.notify("✓ following @Gheat1 — appreciate you!")
+        else:
+            self.app.notify("couldn't follow (check gh auth)", severity="warning")
+
+    def action_close(self) -> None:
+        self.dismiss(None)
+
+
 # ── the app ──────────────────────────────────────────────────────────────────
 class StoreApp(KitApp):
     TITLE = "tuistore"
@@ -849,6 +971,10 @@ class StoreApp(KitApp):
         n = len(self.catalog.entries)
         self.set_timer(0.1, lambda: self.notify(
             f"{n} tools ready · {self.env.label} · type to search, ↓ to browse, ? for keys"))
+        # first launch only: a gentle ask for a star (never shown again)
+        if not state.get("welcomed"):
+            DIRS.save_state({"welcomed": True})
+            self.set_timer(0.5, lambda: self.push_screen(WelcomeModal()))
 
     def on_resize(self, event) -> None:
         # widths settle after the first layout — re-truncate rows to real width

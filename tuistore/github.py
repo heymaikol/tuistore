@@ -84,3 +84,10 @@ async def unstar(owner: str, repo: str) -> bool:
         return False
     code, _, _ = await _gh("api", "-X", "DELETE", f"user/starred/{owner}/{repo}")
     return code == 0
+
+
+async def follow(login: str) -> bool:
+    if not available():
+        return False
+    code, _, _ = await _gh("api", "-X", "PUT", f"user/following/{login}")
+    return code == 0
