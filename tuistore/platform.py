@@ -104,7 +104,7 @@ def _read_os_release() -> dict[str, str]:
     data: dict[str, str] = {}
     for path in ("/etc/os-release", "/usr/lib/os-release"):
         try:
-            for line in Path(path).read_text().splitlines():
+            for line in Path(path).read_text(encoding="utf-8").splitlines():
                 if "=" in line and not line.startswith("#"):
                     k, _, v = line.partition("=")
                     data[k.strip()] = v.strip().strip('"').strip("'")

@@ -27,7 +27,7 @@ LEDGER = Path.home() / ".local/state/tuistore/installed.json"
 # ── the ledger ──────────────────────────────────────────────────────────────
 def load_ledger() -> dict:
     try:
-        return json.loads(LEDGER.read_text())
+        return json.loads(LEDGER.read_text(encoding="utf-8"))
     except Exception:
         return {}
 
@@ -35,7 +35,7 @@ def load_ledger() -> dict:
 def save_ledger(data: dict) -> None:
     try:
         LEDGER.parent.mkdir(parents=True, exist_ok=True)
-        LEDGER.write_text(json.dumps(data, indent=1))
+        LEDGER.write_text(json.dumps(data, indent=1), encoding="utf-8")
     except Exception:
         pass
 

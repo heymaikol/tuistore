@@ -303,7 +303,7 @@ def refetch(url: str = CATALOG_URL, dest: Path = USER_CATALOG) -> tuple[bool, st
         doc = json.loads(raw)  # validate before writing
         n = len(doc.get("entries", []))
         dest.parent.mkdir(parents=True, exist_ok=True)
-        dest.write_text(raw)
+        dest.write_text(raw, encoding="utf-8")
         load.cache_clear()
         return True, f"{n} tools · updated {doc.get('generated_at', '')}"
     except Exception as e:
