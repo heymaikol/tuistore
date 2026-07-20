@@ -305,18 +305,41 @@ def _cmd_info(args: list[str]) -> int:
 # ── existing verbs ──────────────────────────────────────────────────────────
 _SELF_SRC = "git+https://github.com/Gheat1/tuistore"
 
-# Known Homebrew install prefixes (macOS Apple Silicon, macOS Intel, Linuxbrew).
-# A real Homebrew install always resolves to <prefix>/Cellar/<formula>/....
-_HOMEBREW_PREFIXES = ("/opt/homebrew/", "/usr/local/", "/home/linuxbrew/.linuxbrew/")
+# Install roots that are *exclusively* Homebrew's own — nothing else
+# legitimately places files here, so matching the whole tree is safe.
+_HOMEBREW_ONLY_PREFIXES = ("/opt/homebrew/", "/home/linuxbrew/.linuxbrew/")
+# /usr/local is Homebrew's prefix on Intel macOS too, but it's also a
+# generic dumping ground for lots of non-brew tools — only the Cellar-
+# qualified path under it is unambiguously brew-owned.
+_HOMEBREW_SHARED_PREFIXES = ("/usr/local/",)
 
 
 def _is_homebrew_cellar_path(low_path: str) -> bool:
-    """True only for a path shaped like a real Homebrew Cellar install —
-    a `Cellar` directory component directly under a known Homebrew prefix —
-    not merely any path that happens to contain "cellar" as a substring
-    (e.g. a project or backup directory named "mycellar-backups")."""
+    """True for a path that's actually inside a Homebrew install — not
+    merely any path that happens to contain "cellar" as a substring (e.g.
+    a project or backup directory named "mycellar-backups").
+
+    `shutil.which()` returns the `<prefix>/bin/<name>` symlink Homebrew
+    puts on PATH, not the `<prefix>/Cellar/<formula>/<version>/...` target
+    it points to — `_how_installed()` tries to `resolve()` that symlink to
+    the real Cellar path, but resolution silently no-ops for a path with
+    no real file behind it (a mock in tests, or an edge-case broken/absent
+    symlink), so this must also recognize the *unresolved* `bin/` location
+    for the prefixes that are exclusively Homebrew's own.
+
+    Checked as a substring, not a strict prefix: macOS's `Path.resolve()`
+    can itself rewrite a leading `/home/...` to
+    `/System/Volumes/Data/home/...` (a real APFS synthetic-firmlink quirk,
+    not a test artifact — confirmed on-machine), which would silently
+    break a `startswith` check on an otherwise-correct Homebrew path. These
+    prefix strings are distinctive multi-segment paths, unlike the single
+    word "cellar" the original bug matched anywhere — an unrelated path
+    coincidentally containing one whole is not a realistic risk.
+    """
     normalized = low_path.replace("\\", "/")  # tolerate a resolve()'d Windows-style path
-    return any(normalized.startswith(prefix + "cellar/") for prefix in _HOMEBREW_PREFIXES)
+    if any(prefix in normalized for prefix in _HOMEBREW_ONLY_PREFIXES):
+        return True
+    return any(prefix + "cellar/" in normalized for prefix in _HOMEBREW_SHARED_PREFIXES)
 
 
 def _how_installed() -> str:
