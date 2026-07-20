@@ -210,7 +210,7 @@ def _prefer_uv(entry: Entry) -> None:
 
     best_src, best_pkg = None, None
     for m in entry.methods:
-        if m.kind in ("uv", "pipx", "pip"):
+        if m.kind in ("uv", "uv-pip", "pipx", "pip"):
             pkg = pkg_from_command(m.kind, m.command)
             if pkg and (best_src is None
                         or _SRC_ORDER.get(m.source, 9) < _SRC_ORDER.get(best_src, 9)):

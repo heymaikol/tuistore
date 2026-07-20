@@ -205,6 +205,7 @@ _UNINSTALL = {
     "cargo": "cargo uninstall {pkg}",
     "cargo-binstall": "cargo uninstall {pkg}",
     "uv": "uv tool uninstall {pkg}",
+    "uv-pip": "uv pip uninstall {pkg}",
     "pipx": "pipx uninstall {pkg}",
     "pip": "python3 -m pip uninstall -y {pkg}",  # portable: many boxes have pip3, not pip
     "brew": "brew uninstall {pkg}",
@@ -237,6 +238,7 @@ _UPDATE = {
     "cargo": "cargo install {pkg} --force",
     "cargo-binstall": "cargo binstall {pkg} --force",
     "uv": "uv tool upgrade {pkg}",
+    "uv-pip": "uv pip install -U {pkg}",
     "pipx": "pipx upgrade {pkg}",
     "pip": "python3 -m pip install -U {pkg}",
     "brew": "brew upgrade {pkg}",
