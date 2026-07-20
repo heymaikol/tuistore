@@ -1,5 +1,19 @@
 # changelog
 
+## 0.4.5
+
+- Linux distro coverage fixes:
+  - Gentoo's `emerge` install method has existed for a while but had no
+    uninstall/update commands wired up — `u`/`x` on an emerge-installed tool
+    silently failed. Fixed.
+  - Added a first-class `eopkg` install method for Solus (was probed for
+    but never offered, even with `eopkg` on PATH).
+  - "update everything" (`,` → update all / `tuistore upgrade`) was missing
+    Void (`xbps`), Alpine (`apk`), Gentoo (`emerge`), and now Solus
+    (`eopkg`) from its bulk-upgrade list, even though each already has full
+    per-tool install/uninstall/update support — it just silently skipped
+    your system package manager on those four distros.
+
 ## 0.4.4
 
 - Catalog grew from 756 to 818 tools: swept [cli.masoko.net](https://cli.masoko.net)
