@@ -27,6 +27,7 @@ from .shell import shell_command
 # kind -> (label, preference[lower=better], requires, os allow, family allow)
 KINDS: dict[str, dict] = {
     "uv":       dict(label="uv tool install",     pref=5,  requires=["uv"]),
+    "uv-pip":   dict(label="uv pip install",       pref=16, requires=["uv"]),
     "cargo-binstall": dict(label="cargo binstall", pref=6, requires=["cargo-binstall"]),
     "brew":     dict(label="brew install",       pref=8,  requires=["brew"]),
     "cargo":    dict(label="cargo install",       pref=10, requires=["cargo"]),
@@ -208,6 +209,8 @@ def force_variant(kind: str, command: str) -> str:
         return f"{command} --force"
     if kind == "pip" and "--force-reinstall" not in command:
         return f"{command} --force-reinstall"
+    if kind == "uv-pip" and "--reinstall" not in command:
+        return f"{command} --reinstall"
     if kind == "brew" and command.strip().startswith("brew install"):
         return command.replace("brew install", "brew reinstall", 1)
     if kind == "choco" and "--force" not in command:
@@ -225,6 +228,7 @@ _CLASSIFY = [
     ("cargo-binstall", re.compile(r"\bcargo\s+binstall\b")),
     ("cargo", re.compile(r"\bcargo\s+install\b")),
     ("uv", re.compile(r"\buv\s+tool\s+install\b|\buvx?\s+install\b")),
+    ("uv-pip", re.compile(r"\buv\s+pip\s+install\b")),
     ("pipx", re.compile(r"\bpipx\s+install\b")),
     ("pip", re.compile(r"\bpip3?\s+install\b|\bpython3?\s+-m\s+pip\s+install\b")),
     ("go", re.compile(r"\bgo\s+install\b")),
