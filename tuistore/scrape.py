@@ -24,7 +24,7 @@ _INLINE = re.compile(r"`([^`\n]+)`")
 # convention, e.g. `~$ cargo install ...`) directly before the prompt glyph —
 # without it, "~$ cargo install --git ...--force" scrapes with "~$" glued
 # onto the command, which then gets treated as a literal token downstream.
-_PROMPT = re.compile(r"^\s*(?:~[\w./-]*)?(?:\$|#|>|\xe2\x9d\xaf|❯|»)\s+")
+_PROMPT = re.compile(r"^\s*(?:~[\w./-]*)?(?:\$|#|>|\xe2\x9d\xaf|❯|»|▶)\s+")
 _MAXLEN = 400
 
 

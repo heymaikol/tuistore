@@ -256,15 +256,19 @@ _CLASSIFY = [
 
 
 # leading tokens allowed *before* the install verb on a real command line:
-# sudo/doas, `VAR=val` env assignments, and a macOS `arch -arm64` wrapper.
-# Anything else before the verb (e.g. "or: ", "alias x=") is prose, not a command.
+# sudo/doas/env, `VAR=val` env assignments (bare or quoted, e.g.
+# FOO='-C bar'), a macOS `arch -arm64` wrapper, and a prior chained command
+# ("apt update && ", "zypper ref; ") — a two-step update-then-install line
+# is a normal, copy-pasteable install command, not prose. Anything else
+# before the verb (e.g. "or: ", "alias x=") still is.
 _CMD_PREFIX = re.compile(
-    r"^\s*(?:(?:sudo|doas)(?:\s+-\S+)*\s+|"
-    r"[A-Za-z_][A-Za-z0-9_]*=\S+\s+|arch\s+-\S+\s+)*$"
+    r"^\s*(?:\S.*?(?:&&|;)\s+)?"
+    r"(?:(?:sudo|doas|env)(?:\s+-\S+)*\s+|"
+    r"[A-Za-z_][A-Za-z0-9_]*=(?:'[^']*'|\"[^\"]*\"|\S+)\s+|arch\s+-\S+\s+)*$"
 )
 _ARCH_WRAP = re.compile(
-    r"^\s*(?:(?:sudo|doas)(?:\s+-\S+)*\s+|"
-    r"[A-Za-z_][A-Za-z0-9_]*=\S+\s+)*arch\s+-(?:arm64|x86_64|i386)\b"
+    r"^\s*(?:(?:sudo|doas|env)(?:\s+-\S+)*\s+|"
+    r"[A-Za-z_][A-Za-z0-9_]*=(?:'[^']*'|\"[^\"]*\"|\S+)\s+)*arch\s+-(?:arm64|x86_64|i386)\b"
 )
 
 
