@@ -8,18 +8,123 @@ url="https://github.com/Gheat1/tuistore"
 license=('GPL-3.0-or-later')
 depends=('python')
 makedepends=('uv')
-source=("$pkgname-$pkgver.tar.gz::https://github.com/Gheat1/tuistore/archive/refs/tags/v$pkgver.tar.gz")
-sha256sums=('b2be71b0c34b8a3b3dd569a48c5b4f968c0d932aa0aaf01a33c8b3e37b75012b')
 
 # tuistore and ricekit are both on PyPI now, but neither is packaged for
 # Arch — a private venv is the simplest correct way to satisfy the
 # dependency without re-packaging ricekit separately.
+#
+# Every runtime dependency (tuistore's direct PyPI deps plus their full
+# transitive closure) is vendored below as a pinned, pure-Python wheel so
+# that package() never has to reach PyPI. This is required for makepkg's
+# integrity/offline guarantees to actually hold — a clean chroot build
+# (makechrootpkg) or any CI/air-gapped build host has no network access,
+# and pacman's rebuild reproducibility depends on every byte that ends up
+# in the package being covered by source/sha256sums.
+#
+# The set below was resolved against pyproject.toml's dependency ranges
+# ("textual>=1.0", "httpx>=0.27", "ricekit>=0.2.0" as of pkgver=0.4.3) with:
+#   uv pip compile <(printf 'textual>=1.0\nhttpx>=0.27\nricekit>=0.2.0\n') \
+#       --python-version 3.11
+# and cross-checked at both 3.11 and 3.13 to make sure no version-gated
+# marker (e.g. anyio's exceptiongroup backport) silently changes the
+# closure on a different build host's Python minor version — none of the
+# packages below are needed on any 3.11+ interpreter.
+#
+# Re-resolve and re-pin this whole list on every dependency bump (new
+# tuistore release, ricekit release, or a transitive dep major bump).
+source=(
+    "$pkgname-$pkgver.tar.gz::https://github.com/Gheat1/tuistore/archive/refs/tags/v$pkgver.tar.gz"
+
+    # --- runtime deps (textual, httpx, ricekit) + full transitive closure ---
+    "anyio-4.14.2-py3-none-any.whl::https://files.pythonhosted.org/packages/da/35/f2287558c17e29fafc8ef3daf819bb9834061cfa43bff8014f7df7f63bdc/anyio-4.14.2-py3-none-any.whl"
+    "certifi-2026.6.17-py3-none-any.whl::https://files.pythonhosted.org/packages/ef/2f/c5464532e965badff2f4c4c1a3a83f5697f0d7c407ed0cda44aaa99bb451/certifi-2026.6.17-py3-none-any.whl"
+    "h11-0.16.0-py3-none-any.whl::https://files.pythonhosted.org/packages/04/4b/29cac41a4d98d144bf5f6d33995617b185d14b22401f75ca86f384e87ff1/h11-0.16.0-py3-none-any.whl"
+    "httpcore-1.0.9-py3-none-any.whl::https://files.pythonhosted.org/packages/7e/f5/f66802a942d491edb555dd61e3a9961140fd64c90bce1eafd741609d334d/httpcore-1.0.9-py3-none-any.whl"
+    "httpx-0.28.1-py3-none-any.whl::https://files.pythonhosted.org/packages/2a/39/e50c7c3a983047577ee07d2a9e53faf5a69493943ec3f6a384bdc792deb2/httpx-0.28.1-py3-none-any.whl"
+    "idna-3.18-py3-none-any.whl::https://files.pythonhosted.org/packages/1e/5e/d4e9f1a599fb8e573b7b87160658329fbf28d19eac2718f51fc3def3aa5a/idna-3.18-py3-none-any.whl"
+    "linkify_it_py-2.1.0-py3-none-any.whl::https://files.pythonhosted.org/packages/b4/de/88b3be5c31b22333b3ca2f6ff1de4e863d8fe45aaea7485f591970ec1d3e/linkify_it_py-2.1.0-py3-none-any.whl"
+    "markdown_it_py-4.2.0-py3-none-any.whl::https://files.pythonhosted.org/packages/b3/81/4da04ced5a082363ecfa159c010d200ecbd959ae410c10c0264a38cac0f5/markdown_it_py-4.2.0-py3-none-any.whl"
+    "mdit_py_plugins-0.6.1-py3-none-any.whl::https://files.pythonhosted.org/packages/a5/69/6da5581c6a7fede7dc261bf4e67d6adca4196f176b43288b55b3db395b6e/mdit_py_plugins-0.6.1-py3-none-any.whl"
+    "mdurl-0.1.2-py3-none-any.whl::https://files.pythonhosted.org/packages/b3/38/89ba8ad64ae25be8de66a6d463314cf1eb366222074cfda9ee839c56a4b4/mdurl-0.1.2-py3-none-any.whl"
+    "platformdirs-4.10.1-py3-none-any.whl::https://files.pythonhosted.org/packages/ec/73/6fd0bb9ce84138c3857f12e9de63bc901852975a092d545f18087a204aa2/platformdirs-4.10.1-py3-none-any.whl"
+    "pygments-2.20.0-py3-none-any.whl::https://files.pythonhosted.org/packages/f4/7e/a72dd26f3b0f4f2bf1dd8923c85f7ceb43172af56d63c7383eb62b332364/pygments-2.20.0-py3-none-any.whl"
+    "ricekit-0.2.0-py3-none-any.whl::https://files.pythonhosted.org/packages/e2/06/255a4272be351beb3ca4c575bffecd48efb160005abe9638117dbcc88f02/ricekit-0.2.0-py3-none-any.whl"
+    "rich-15.0.0-py3-none-any.whl::https://files.pythonhosted.org/packages/82/3b/64d4899d73f91ba49a8c18a8ff3f0ea8f1c1d75481760df8c68ef5235bf5/rich-15.0.0-py3-none-any.whl"
+    "textual-8.2.8-py3-none-any.whl::https://files.pythonhosted.org/packages/fb/be/35261223d9416a0751cdff1c7b4a6f881387218a12d439fe22fefebc8c04/textual-8.2.8-py3-none-any.whl"
+    "typing_extensions-4.16.0-py3-none-any.whl::https://files.pythonhosted.org/packages/49/d3/b8441a820a491ddfc024b0b0cf0393375b75ea13866d9c66727e54c2fc80/typing_extensions-4.16.0-py3-none-any.whl"
+    "uc_micro_py-2.0.0-py3-none-any.whl::https://files.pythonhosted.org/packages/61/73/d21edf5b204d1467e06500080a50f79d49ef2b997c79123a536d4a17d97c/uc_micro_py-2.0.0-py3-none-any.whl"
+
+    # --- build-time only: PEP 517 backend for tuistore's own setuptools
+    #     build. Installed and used with --no-build-isolation, then
+    #     uninstalled again before the venv is staged into the package. ---
+    "setuptools-83.0.0-py3-none-any.whl::https://files.pythonhosted.org/packages/5d/40/e1e72872c6354b306daef1703549e8e83b4d43cfea356311bf722a043752/setuptools-83.0.0-py3-none-any.whl"
+)
+sha256sums=('b2be71b0c34b8a3b3dd569a48c5b4f968c0d932aa0aaf01a33c8b3e37b75012b'
+            '9f505dda5ac9f0c8309b5e8bd445a8c2bf7246f3ce950121e45ea15bc41d1494'
+            '2227dcbaafe0d2f59279d1762ddddc37783ed4354594f194ffc31d20f41fc3db'
+            '63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86'
+            '2d400746a40668fc9dec9810239072b40b4484b640a8c38fd654a024c7a1bf55'
+            'd909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad'
+            '7f952cbe720b688055e3f87de14f5c3e5fdaa8bc3928985c4077ca689de849a2'
+            '0d252c1594ecba2ecedc444053db5d3a9b7ec1b0dd929c8f1d74dce89f86c05e'
+            '9f7ebbcd14fe59494226453aed97c1070d83f8d24b6fc3a3bcf9a38092641c4a'
+            '214c82fb2ac524472ab6a5bcab1de80f73b50443e187f401bfd77efbc7c6481d'
+            '84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8'
+            '0e4eff26be2d75293977f7cddc153fd9b8eaa7fb0c7b64ffe4076cb443117443'
+            '81a9e26dd42fd28a23a2d169d86d7ac03b46e2f8b59ed4698fb4785f946d0176'
+            'e0fb551bd69d6fc44b800a1ce82f4f5eb53cc68e3f44beaaf0b0816bdc5c09a6'
+            '33bd4ef74232fb73fe9279a257718407f169c09b78a87ad3d296f548e27de0bb'
+            '267375fd402dc8d981457212efa71f0e3365fd17bba144ba9bb3ed7563cb374a'
+            '481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8'
+            '3603a3859af53e5a39bc7677713c78ea6589ff188d70f4fee165db88e22b242c'
+            '29b23c360f22f414dc7336bb39178cc7bcbf6021ed2733cde173f09dba19abb3')
+
+# wheels are zip archives but makepkg only auto-extracts recognized
+# archive extensions (.tar.*, .zip, ...) — .whl isn't one of them, so
+# these are already left untouched. Listed explicitly for clarity and to
+# pin behavior if that extension list ever changes upstream.
+noextract=(
+    'anyio-4.14.2-py3-none-any.whl'
+    'certifi-2026.6.17-py3-none-any.whl'
+    'h11-0.16.0-py3-none-any.whl'
+    'httpcore-1.0.9-py3-none-any.whl'
+    'httpx-0.28.1-py3-none-any.whl'
+    'idna-3.18-py3-none-any.whl'
+    'linkify_it_py-2.1.0-py3-none-any.whl'
+    'markdown_it_py-4.2.0-py3-none-any.whl'
+    'mdit_py_plugins-0.6.1-py3-none-any.whl'
+    'mdurl-0.1.2-py3-none-any.whl'
+    'platformdirs-4.10.1-py3-none-any.whl'
+    'pygments-2.20.0-py3-none-any.whl'
+    'ricekit-0.2.0-py3-none-any.whl'
+    'rich-15.0.0-py3-none-any.whl'
+    'textual-8.2.8-py3-none-any.whl'
+    'typing_extensions-4.16.0-py3-none-any.whl'
+    'uc_micro_py-2.0.0-py3-none-any.whl'
+    'setuptools-83.0.0-py3-none-any.whl'
+)
+
 package() {
     cd "$pkgname-$pkgver"
 
     install -d "$pkgdir/opt/$pkgname"
     uv venv --python python3 "$pkgdir/opt/$pkgname/venv"
-    uv pip install --python "$pkgdir/opt/$pkgname/venv/bin/python" .
+    venvpy="$pkgdir/opt/$pkgname/venv/bin/python"
+
+    # Fully offline install: --no-index/--find-links restrict resolution
+    # to the pinned wheels staged in $srcdir by source[] above, so this
+    # never touches the network, matching the integrity guarantee that
+    # sha256sums is supposed to provide.
+    #
+    # setuptools has to be installed into the venv first (rather than
+    # just sitting in $srcdir) because --no-build-isolation makes tuistore's
+    # own setuptools.build_meta backend run in-process against whatever
+    # python it's given — it needs to already be importable there.
+    uv pip install --python "$venvpy" --no-index --find-links "$srcdir" \
+        setuptools
+    uv pip install --python "$venvpy" --no-index --find-links "$srcdir" \
+        --no-build-isolation .
+    uv pip uninstall --python "$venvpy" setuptools
 
     # invoke the venv's python directly (-m) rather than relying on the
     # auto-generated entry-point script, whose shebang bakes in the
