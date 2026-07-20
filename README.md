@@ -20,7 +20,7 @@ Built on [🍚 ricekit](https://github.com/Gheat1/ricekit) · seeded from
 ![python](https://img.shields.io/badge/python-3.11+-4b8bbe)
 ![license](https://img.shields.io/badge/license-GPLv3-a6e3a1)
 [![homebrew](https://img.shields.io/badge/homebrew-gheat1%2Ftuistore-fbb040)](https://github.com/Gheat1/homebrew-tuistore)
-![tools](https://img.shields.io/badge/catalog-740+_apps-fab387)
+![tools](https://img.shields.io/badge/catalog-800+_apps-fab387)
 ![built on](https://img.shields.io/badge/built_on-ricekit-cba6f7)
 
 <img src="assets/demo.gif" alt="tuistore demo — search, browse, and one-key install" width="100%">
@@ -38,7 +38,7 @@ commands in a README are for the *wrong* OS.
 
 tuistore fixes both. It's a fast, mouse-and-keyboard TUI that:
 
-- puts **740+ curated terminal apps** one fuzzy-search away — full-screen TUIs
+- puts **800+ curated terminal apps** one fuzzy-search away — full-screen TUIs
   *and* the modern CLI toolkit (fastfetch, neovim, ripgrep, bat, eza, starship,
   zoxide, fzf…),
 - shows you the **install commands that actually work on your machine**, ranked,
@@ -202,11 +202,11 @@ and is recorded in the same ledger — so `tuistore installed`, `update`,
 - **★ Featured.** Gheat's suite — [ltui](https://github.com/runpantheon/ltui),
   [NaviTui](https://github.com/Gheat1/NaviTui), [ricekit](https://github.com/Gheat1/ricekit)
   — plus a few hand-picked community tools, all pinned to the top.
-- **740+ tools** — [rothgar/awesome-tuis](https://github.com/rothgar/awesome-tuis)
+- **800+ tools** — [rothgar/awesome-tuis](https://github.com/rothgar/awesome-tuis)
   plus a curated set of terminal essentials (the fetchers, editors, and modern
-  CLI utilities people actually `brew install`), in browsable categories, each
-  enriched with live GitHub stars,
-  language, and freshness.
+  CLI utilities people actually `brew install`) and a sweep of
+  [cli.masoko.net](https://cli.masoko.net), in browsable categories, each
+  enriched with live GitHub stars, language, and freshness.
 
 Refresh or grow the catalog any time — it's a single re-runnable script:
 

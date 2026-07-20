@@ -1,5 +1,12 @@
 # changelog
 
+## 0.4.4
+
+- Catalog grew from 756 to 818 tools: swept [cli.masoko.net](https://cli.masoko.net)
+  (The Terminal Index) for 62 tools not already covered by awesome-tuis or
+  the hand-picked essentials — cross-checked against every existing entry,
+  including GitHub org-transfer redirects, to avoid duplicates.
+
 ## 0.4.3
 
 - Now that tuistore is genuinely on PyPI, `tuistore update` / the manage
