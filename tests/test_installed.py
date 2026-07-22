@@ -168,6 +168,22 @@ class TestManagerAwarePackageParsing(unittest.TestCase):
             "posting",
         )
 
+    def test_other_value_flags_are_not_targets_either(self):
+        # _VALUE_FLAGS only lists the flags plausible in a real README, not
+        # every pip/uv flag — these are the ones outside --python that would
+        # otherwise reproduce the same "flag value mistaken for the package"
+        # bug this PR fixes.
+        cases = [
+            ("pip", "pip install --target /custom/dir mypackage", "mypackage"),
+            ("pip", "pip install -r requirements.txt somepkg", "somepkg"),
+            ("pip", "pip install --prefix /usr/local mypackage", "mypackage"),
+            ("uv", "uv tool install --python-preference only-managed mypackage", "mypackage"),
+            ("uv", "uv tool install --resolution lowest mypackage", "mypackage"),
+        ]
+        for kind, command, expected in cases:
+            with self.subTest(command=command):
+                self.assertEqual(pkg_from_command(kind, command), expected)
+
     def test_extras_are_kept_for_install_and_stripped_for_lifecycle(self):
         command = 'pip install "yt-dlp[default]"'
         self.assertEqual(_extract_target("pip", command), "yt-dlp[default]")

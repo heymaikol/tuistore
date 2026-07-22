@@ -98,9 +98,17 @@ _NOISE = {
 _CARGO_VALUE_FLAGS = {"--git", "--branch", "--tag", "--rev", "--path", "--version", "--features"}
 
 # Python-manager flags whose following token is a value, not the package.
+# Not exhaustive of every pip/uv flag — covers the ones plausible in a
+# README's one-line install instructions. An unlisted value-taking flag
+# still fails safely rather than silently: its value either starts with
+# "/" (a path, e.g. an uncovered --some-dir flag) and is rejected by
+# _SAFE_TARGET, or is itself flag-shaped and already excluded — the real
+# risk this list exists to close is a flag value that *looks* like a
+# package name (e.g. --resolution lowest).
 _VALUE_FLAGS = {
     "--python", "--with", "--index", "--index-url", "--extra-index-url",
-    "-c", "--constraint",
+    "-c", "--constraint", "-r", "--requirement", "--target", "--prefix",
+    "--root", "--resolution", "--python-preference", "-f", "--find-links",
 }
 
 _SAFE_NAME = re.compile(r"^[A-Za-z0-9@][A-Za-z0-9@/#:._+-]*$")
